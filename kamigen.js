@@ -24,8 +24,8 @@
 		controls.lookSpeed = 0.1;
 
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color( 0xaaccff );
-		scene.fog = new THREE.FogExp2( 0xaaccff, 0.0007 );
+		scene.background = new THREE.Color( 0x66CCFF );
+		scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0005 );
 		geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
 		geometry.rotateX( - Math.PI / 2 );
 		for ( var i = 0, l = geometry.vertices.length; i < l; i ++ ) {
@@ -42,9 +42,9 @@
 		mesh = new THREE.Mesh( geometry, material );
 		scene.add( mesh );
 		
-		//stats = new Stats();
-		//container.appendChild( stats.dom );
-		//
+		stats = new Stats();
+		container.appendChild( stats.domElement );
+
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
 	function onWindowResize() {
@@ -57,7 +57,7 @@
 	function animate() {
 		requestAnimationFrame( animate );
 		render();
-		//stats.update();
+		stats.update();
 	}
 	function render() {
 		var delta = clock.getDelta(),
@@ -72,24 +72,23 @@
 
 	function draw_texture () {
 		var texture_image = document.createElement("canvas");
-		var height = 1024;
-		var width = 1024;
+		var height = 128;
+		var width = 128;
 		texture_image.height = height;
 		texture_image.width = width;
 		var simplex = new SimplexNoise();
 	
 		var context = texture_image.getContext('2d');
 		// Create the yellow face
-		var twopi = Math.PI * 200;
+		var twopi = Math.PI * 2;
 		var imageData = context.createImageData(height, width);
 		for (var i = 0; i < width; i++) {
-			var n = simplex.noise(i , width);
+			var n = simplex.noise(width , i);
 			for (var j = 0; j < height; j++) {
-				n += simplex.noise(j, height);
-				var red =  250 * Math.tan(i  * n / twopi) ; 
-				var green = 250 * Math.sin(i  * n  / twopi) ; 
-	
-				var blue =  250 * Math.sin(i  * n  / twopi) ;
+				n -= simplex.noise(height, j);
+				var red =  1.25 * Math.sin(i  * n / twopi) ; 
+				var green = 125 * Math.cos(i  * n  / twopi) ; 
+				var blue =  250 * Math.cos(i  * n  / twopi) ;
 				
 				red = Math.floor(red);
 				green = Math.floor(green);
