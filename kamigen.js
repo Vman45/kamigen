@@ -11,13 +11,18 @@
 	animate();
 	function init() {
 		container = document.getElementById( 'container' );
+		renderer = new THREE.WebGLRenderer();
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		container.innerHTML = "";
+		container.appendChild( renderer.domElement );
+
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
 		camera.position.y = 200;
-		/*
 		controls = new THREE.FirstPersonControls( camera );
 		controls.movementSpeed = 500;
 		controls.lookSpeed = 0.1;
-		*/
+
 		scene = new THREE.Scene();
 		scene.background = new THREE.Color( 0xaaccff );
 		scene.fog = new THREE.FogExp2( 0xaaccff, 0.0007 );
@@ -26,19 +31,17 @@
 		for ( var i = 0, l = geometry.vertices.length; i < l; i ++ ) {
 			geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
 		}
-		/*
-		var texture = new THREE.TextureLoader().load( "textures/water.jpg" );
-		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.set( 5, 5 );
-		*/
-		material = new THREE.MeshBasicMaterial( { color: 0x0044ff, wireframe: true } );
+		var canvas = draw_texture();
+		
+		texture = new THREE.Texture(canvas);
+		texture.anisotropy  = renderer.capabilities.getMaxAnisotropy();
+		texture.needsUpdate = true;
+				
+		material = new THREE.MeshBasicMaterial( { map: texture } );
+
 		mesh = new THREE.Mesh( geometry, material );
 		scene.add( mesh );
-		renderer = new THREE.WebGLRenderer();
-		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setSize( window.innerWidth, window.innerHeight );
-		container.innerHTML = "";
-		container.appendChild( renderer.domElement );
+		
 		//stats = new Stats();
 		//container.appendChild( stats.dom );
 		//
@@ -63,7 +66,48 @@
 			geometry.vertices[ i ].y = 35 * Math.sin( i / 5 + ( time + i ) / 7 );
 		}
 		mesh.geometry.verticesNeedUpdate = true;
-		//controls.update( delta );
+		controls.update( delta );
 		renderer.render( scene, camera );
 	}
+
+	function draw_texture () {
+		var texture_image = document.createElement("canvas");
+		var height = 1024;
+		var width = 1024;
+		texture_image.height = height;
+		texture_image.width = width;
+		var simplex = new SimplexNoise();
+	
+		var context = texture_image.getContext('2d');
+		// Create the yellow face
+		var twopi = Math.PI * 200;
+		var imageData = context.createImageData(height, width);
+		for (var i = 0; i < width; i++) {
+			var n = simplex.noise(i , width);
+			for (var j = 0; j < height; j++) {
+				n += simplex.noise(j, height);
+				var red =  250 * Math.tan(i  * n / twopi) ; 
+				var green = 250 * Math.sin(i  * n  / twopi) ; 
+	
+				var blue =  250 * Math.sin(i  * n  / twopi) ;
+				
+				red = Math.floor(red);
+				green = Math.floor(green);
+				blue = Math.floor(blue);
+				setPixel(imageData, i, j, red, green, blue, 255);
+			}
+		}
+		context.putImageData(imageData, 0,0);
+	
+		return texture_image;
+	}
+	
+	function setPixel(imageData, x, y, r, g, b, a) {
+	    var index = (x + y * imageData.width) * 4;
+	    imageData.data[index+0] = r;
+	    imageData.data[index+1] = g;
+	    imageData.data[index+2] = b;
+	    imageData.data[index+3] = a;
+	}
+
 }(this));
