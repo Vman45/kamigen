@@ -3,7 +3,7 @@
     // Code
 	var container, stats;
 	var camera, controls, scene, renderer;
-	var mesh, texture, geometry, material;
+	var water, texture, water_geometry, material;
 	var worldWidth = 128, worldDepth = 128,
 	worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 	var clock = new THREE.Clock();
@@ -17,19 +17,24 @@
 		container.innerHTML = "";
 		container.appendChild( renderer.domElement );
 
-		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
-		camera.position.y = 200;
-		controls = new THREE.FirstPersonControls( camera );
-		controls.movementSpeed = 500;
-		controls.lookSpeed = 0.1;
-
 		scene = new THREE.Scene();
 		scene.background = new THREE.Color( 0x66CCFF );
 		scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0005 );
-		geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
-		geometry.rotateX( - Math.PI / 2 );
-		for ( var i = 0, l = geometry.vertices.length; i < l; i ++ ) {
-			geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
+		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+		camera.position.y = 200;
+
+		var light = new THREE.PointLight( 0xffffff );
+		light.position.copy( camera.position );
+		scene.add( light );
+		
+		controls = new THREE.FirstPersonControls( camera );
+		controls.movementSpeed = 500;
+		controls.lookSpeed = 0.05;
+
+		water_geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
+		water_geometry.rotateX( - Math.PI / 2 );
+		for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
+			water_geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
 		}
 		var canvas = draw_texture();
 		
@@ -39,9 +44,35 @@
 				
 		material = new THREE.MeshBasicMaterial( { map: texture } );
 
-		mesh = new THREE.Mesh( geometry, material );
-		scene.add( mesh );
+		water = new THREE.Mesh( water_geometry, material );
+		scene.add( water );
 		
+		var closedSpline = new THREE.CatmullRomCurve3( [
+			new THREE.Vector3( -60, -100,  60 ),
+			new THREE.Vector3( -60,   20,  60 ),
+			new THREE.Vector3( -60,  120,  60 ),
+			new THREE.Vector3(  60,   20, -60 ),
+			new THREE.Vector3(  60, -100, -60 )
+		] );
+		closedSpline.type = 'catmullrom';
+		closedSpline.closed = true;
+		var extrudeSettings = {
+			steps			: 50,
+			bevelEnabled	: false,
+			extrudePath		: closedSpline
+		};
+		var pts = [], count = 3;
+		for ( var i = 0; i < count; i ++ ) {
+			var l = 20;
+			var a = 2 * i / count * Math.PI;
+			pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * l ) );
+		}
+		var shape = new THREE.Shape( pts );
+		var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+		var material = new THREE.MeshLambertMaterial( { color: 0xFFAA00, wireframe: false } );
+		var mesh = new THREE.Mesh( geometry, material );
+		mesh.position.set(1000, 200, 0);
+		scene.add( mesh );
 		stats = new Stats();
 		container.appendChild( stats.domElement );
 
@@ -62,10 +93,10 @@
 	function render() {
 		var delta = clock.getDelta(),
 			time = clock.getElapsedTime() * 10;
-		for ( var i = 0, l = geometry.vertices.length; i < l; i ++ ) {
-			geometry.vertices[ i ].y = 35 * Math.sin( i / 5 + ( time + i ) / 7 );
+		for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
+			water_geometry.vertices[ i ].y = 35 * Math.sin( i / 5 + ( time + i ) / 7 );
 		}
-		mesh.geometry.verticesNeedUpdate = true;
+		water.geometry.verticesNeedUpdate = true;
 		controls.update( delta );
 		renderer.render( scene, camera );
 	}
