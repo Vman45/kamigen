@@ -27,7 +27,7 @@
 		light.position.copy( camera.position );
 		scene.add( light );
 		
-		controls = new THREE.FirstPersonControls( camera );
+		controls = new THREE.OrbitControls( camera, renderer.domElement );
 		controls.movementSpeed = 500;
 		controls.lookSpeed = 0.05;
 
@@ -47,37 +47,94 @@
 		water = new THREE.Mesh( water_geometry, material );
 		scene.add( water );
 		
-		var closedSpline = new THREE.CatmullRomCurve3( [
-			new THREE.Vector3( -60, -100,  60 ),
-			new THREE.Vector3( -60,   20,  60 ),
-			new THREE.Vector3( -60,  120,  60 ),
-			new THREE.Vector3(  60,   20, -60 ),
-			new THREE.Vector3(  60, -100, -60 )
-		] );
-		closedSpline.type = 'catmullrom';
-		closedSpline.closed = true;
-		var extrudeSettings = {
-			steps			: 50,
-			bevelEnabled	: false,
-			extrudePath		: closedSpline
-		};
-		var pts = [], count = 3;
-		for ( var i = 0; i < count; i ++ ) {
-			var l = 20;
-			var a = 2 * i / count * Math.PI;
-			pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * l ) );
-		}
-		var shape = new THREE.Shape( pts );
-		var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-		var material = new THREE.MeshLambertMaterial( { color: 0xFFAA00, wireframe: false } );
-		var mesh = new THREE.Mesh( geometry, material );
-		mesh.position.set(1000, 200, 0);
-		scene.add( mesh );
+		var ship = drawShip()
+		ship.add(camera);
+		scene.add( ship );
 		stats = new Stats();
 		container.appendChild( stats.domElement );
 
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
+
+	function drawShip() {
+		var ship;
+
+		var wingPort = getWing('port');
+		var wingStarboard = getWing('starboard');
+
+		var fuselage = getFuselage();
+		
+		ship = new THREE.Object3D();
+		ship.add(wingPort);
+		ship.add(wingStarboard);
+		ship.add(fuselage);
+		ship.position.set(500, 200, 0);
+		
+		return ship;
+	}
+
+	function getFuselage() {
+		var geometry = new THREE.CylinderGeometry( 15, 2, 50, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xffAA00} );
+		var nose = new THREE.Mesh( geometry, material );
+		nose.rotation.set(0, 0, Math.PI / 2);
+		nose.position.set(150, 0, 0);
+
+		geometry = new THREE.CylinderGeometry( 15, 15, 250, 32 );
+		var body = new THREE.Mesh(geometry, material);
+		body.rotation.set(0, 0, Math.PI / 2);
+
+		var fuselage = new THREE.Object3D();
+		fuselage.add(nose);
+		fuselage.add(body);
+		fuselage.position.set(0,-120, 0);
+
+		return fuselage;
+	}
+
+	function getWing(side) {
+
+		if (side == 'port') {
+			var closedSpline = new THREE.CatmullRomCurve3( [		
+				new THREE.Vector3(  -120,  20, 120 ),
+				new THREE.Vector3(  -120,  20, -120 )
+			] );
+		}
+		if (side == 'starboard') {
+			var closedSpline = new THREE.CatmullRomCurve3( [		
+				new THREE.Vector3(  -120,  20, -120 ),
+				new THREE.Vector3(  -120,  20, 120 )
+			] );	
+		}
+		closedSpline.type = 'catmullrom';
+		closedSpline.closed = true;
+		var extrudeSettings = {
+			steps			: 10,
+			bevelEnabled	: false,
+			extrudePath		: closedSpline
+		};
+		var pts = [], count = 3;
+		for ( var i = 0; i < count; i ++ ) {
+			var l = 30;
+			var a = 20 * i / count * Math.PI;
+			pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * 4 ) );
+		}
+		var shape = new THREE.Shape( pts );
+		var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+		var material = new THREE.MeshLambertMaterial( { color: 0xFFAA00, wireframe: false } );
+		var wing = new THREE.Mesh( geometry, material );
+		wing.rotation.set(0, 0 , Math.PI / 2);
+
+		if (side == 'port') {
+			wing.position.set(0,0,-130);	
+		}
+		if (side == 'starboard') {
+			wing.position.set(0,0,130);
+		}
+		
+		return wing;
+	}
+
 	function onWindowResize() {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
