@@ -156,6 +156,8 @@ function render() {
 	}
 	water.geometry.verticesNeedUpdate = true;
 	camera_controls.update( delta );
+	draw_texture();
+	texture.needsUpdate = true;
 
 	if (keyboard.pressed("w")) {
 		ship.translateZ(10);
@@ -179,7 +181,8 @@ function render() {
 }
 
 function draw_texture () {
-	var texture_image = document.createElement("canvas");
+	var delta = clock.getDelta();
+	var texture_image = document.getElementById("waterTexture");
 	var height = 128;
 	var width = 128;
 	texture_image.height = height;
@@ -188,15 +191,15 @@ function draw_texture () {
 
 	var context = texture_image.getContext('2d');
 	// Create the yellow face
-	var twopi = Math.PI * 2;
+	var twopi = Math.PI * 2 ;
 	var imageData = context.createImageData(height, width);
 	for (var i = 0; i < width; i++) {
-		var n = simplex.noise(width , i);
+		var n = simplex.noise(height, i);
 		for (var j = 0; j < height; j++) {
-			n -= simplex.noise(height, j);
-			var red =  1.25 * Math.sin(i  * n / twopi) ; 
-			var green = 125 * Math.cos(i  * n  / twopi) ; 
-			var blue =  250 * Math.cos(i  * n  / twopi) ;
+			n -= simplex.noise(width, j);
+			var red =  2.5 * Math.sin(delta * n / twopi) ;
+			var green = 125 * Math.cos(delta * n  / twopi) ; 
+			var blue =  250 * Math.cos(delta * n  / twopi) ;
 			
 			red = Math.floor(red);
 			green = Math.floor(green);

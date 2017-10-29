@@ -22,6 +22,12 @@
 	    	top: 10px;
 	    	left: 10px;
 	    }
+      #waterTexture {
+        position: absolute;
+        top: 100px;
+        left: 10px;
+        z-index: 10;
+      }
       #info {
         position: relative;
         z-index: 10;
@@ -61,6 +67,7 @@
       </ul>
     </div>
   	<div id="container"></div>
+    <canvas id="waterTexture"></canvas>
   </body>
   <script src="./jquery.min.js"></script>
   <script src="./three.min.js"></script>
