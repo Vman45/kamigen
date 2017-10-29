@@ -22,9 +22,44 @@
 	    	top: 10px;
 	    	left: 10px;
 	    }
+      #info {
+        position: relative;
+        z-index: 10;
+        width: 400px;
+        margin: 0 auto;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
+    <div id="info">
+      <h1>Kamigen</h1>
+      <p>Welcome to the Kamigen demo. <a href="https://github.com/paulbrzeski/kamigen">More info</a></p>
+      <h2>Controls:</h2>
+      <ul>
+        <li>
+          W - Forward
+        </li>
+        <li>
+        S - Back
+        </li>
+        <li>
+        A - Left
+        </li>
+        <li>
+        D - Right
+        </li>
+        <li>
+        Shift - Down
+        </li>
+        <li>
+        Space - Up
+        </li>
+        <li>
+        Mouse - Move Camera
+        </li>
+      </ul>
+    </div>
   	<div id="container"></div>
   </body>
   <script src="./jquery.min.js"></script>
