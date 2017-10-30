@@ -20,7 +20,7 @@ function init() {
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0x66CCFF );
-	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0005 );
+	
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
 	camera.position.y = 800;
 	camera.position.z = - 1500;
@@ -33,7 +33,7 @@ function init() {
 	camera_controls.movementSpeed = 500;
 	camera_controls.lookSpeed = 0.05;
 
-	water_geometry = new THREE.PlaneGeometry( 200000, 200000, worldWidth - 1, worldDepth - 1 );
+	water_geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
 	water_geometry.rotateX( - Math.PI / 2 );
 	for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
 		water_geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
@@ -44,7 +44,7 @@ function init() {
 	texture.anisotropy  = renderer.capabilities.getMaxAnisotropy();
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.offset.set( 0, 0 );
-    texture.repeat.set( 100, 100 );
+    texture.repeat.set( 10, 10 );
 	texture.needsUpdate = true;
 
 	material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.8 } );
