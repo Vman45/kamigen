@@ -156,8 +156,8 @@ function render() {
 	}
 	water.geometry.verticesNeedUpdate = true;
 	camera_controls.update( delta );
-	draw_texture();
-	texture.needsUpdate = true;
+	// draw_texture();
+	// texture.needsUpdate = true;
 
 	if (keyboard.pressed("w")) {
 		ship.translateZ(10);
@@ -181,7 +181,7 @@ function render() {
 }
 
 function draw_texture () {
-	var delta = clock.getDelta();
+	var delta = clock.getElapsedTime();
 	var texture_image = document.getElementById("waterTexture");
 	var height = 128;
 	var width = 128;
@@ -194,12 +194,11 @@ function draw_texture () {
 	var twopi = Math.PI * 2 ;
 	var imageData = context.createImageData(height, width);
 	for (var i = 0; i < width; i++) {
-		var n = simplex.noise(height, i);
 		for (var j = 0; j < height; j++) {
-			n -= simplex.noise(width, j);
-			var red =  2.5 * Math.sin(delta * n / twopi) ;
-			var green = 125 * Math.cos(delta * n  / twopi) ; 
-			var blue =  250 * Math.cos(delta * n  / twopi) ;
+			var n = simplex.noise3d(i*width,j*height, delta);
+			var red =  2.5 * Math.sin(i * j * n / twopi) ;
+			var green = 125 * Math.cos(i * j * n  / twopi) ; 
+			var blue =  250 * Math.cos(i * j * n  / twopi) ;
 			
 			red = Math.floor(red);
 			green = Math.floor(green);
