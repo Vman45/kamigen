@@ -1,3 +1,5 @@
+var generator = tgen.init(256, 256);
+var groundMirror;
 var container, stats;
 var keyboard, ship;
 var camera, camera_controls, scene, renderer;
@@ -20,8 +22,8 @@ function init() {
 	scene.background = new THREE.Color( 0x66CCFF );
 	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0005 );
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
-	camera.position.y = 200;
-	camera.position.z = - 1000;
+	camera.position.y = 800;
+	camera.position.z = - 1500;
 	
 	var light = new THREE.PointLight( 0xffffff );
 	light.position.copy( camera.position );
@@ -31,7 +33,7 @@ function init() {
 	camera_controls.movementSpeed = 500;
 	camera_controls.lookSpeed = 0.05;
 
-	water_geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
+	water_geometry = new THREE.PlaneGeometry( 200000, 200000, worldWidth - 1, worldDepth - 1 );
 	water_geometry.rotateX( - Math.PI / 2 );
 	for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
 		water_geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
@@ -40,12 +42,26 @@ function init() {
 	
 	texture = new THREE.Texture(canvas);
 	texture.anisotropy  = renderer.capabilities.getMaxAnisotropy();
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.offset.set( 0, 0 );
+    texture.repeat.set( 100, 100 );
 	texture.needsUpdate = true;
-			
-	material = new THREE.MeshBasicMaterial( { map: texture } );
+
+	material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.8 } );
 
 	water = new THREE.Mesh( water_geometry, material );
 	scene.add( water );
+	var WIDTH = window.innerWidth;
+	var HEIGHT = window.innerHeight;
+	groundMirror = new THREE.Mirror( 20000, 20000, {
+		clipBias: -0.0001,
+		textureWidth: WIDTH * window.devicePixelRatio,
+		textureHeight: HEIGHT * window.devicePixelRatio,
+		color: 0x777777
+	} );
+	groundMirror.position.y = -100;
+	groundMirror.rotateX( - Math.PI / 2 );
+	scene.add( groundMirror );
 	
 	ship = drawShip();
 	ship.add(camera);
@@ -69,7 +85,7 @@ function drawShip() {
 	ship.add(wingPort);
 	ship.add(wingStarboard);
 	ship.add(fuselage);
-	ship.position.set(500, 200, 0);
+	ship.position.set(500, 500, 0);
 	
 	return ship;
 }
@@ -183,31 +199,40 @@ function render() {
 function draw_texture () {
 	var delta = clock.getElapsedTime();
 	var texture_image = document.getElementById("waterTexture");
-	var height = 128;
-	var width = 128;
+	var height = 256;
+	var width = 256;
 	texture_image.height = height;
 	texture_image.width = width;
-	var simplex = new SimplexNoise();
 
 	var context = texture_image.getContext('2d');
-	// Create the yellow face
-	var twopi = Math.PI * 2 ;
-	var imageData = context.createImageData(height, width);
-	for (var i = 0; i < width; i++) {
-		for (var j = 0; j < height; j++) {
-			var n = simplex.noise3d(i*width,j*height, delta);
-			var red =  2.5 * Math.sin(i * j * n / twopi) ;
-			var green = 125 * Math.cos(i * j * n  / twopi) ; 
-			var blue =  250 * Math.cos(i * j * n  / twopi) ;
-			
-			red = Math.floor(red);
-			green = Math.floor(green);
-			blue = Math.floor(blue);
-			setPixel(imageData, i, j, red, green, blue, 255);
-		}
-	}
-	context.putImageData(imageData, 0,0);
+	var params = {
+		"width": 256,
+		"height": 256,
+		"items": [
+			[0, "pyramids", {"blend": "lighten", "rgba": [[0, 10], [20, 80], [150, 255], [0.7, 1]]}],
+			[0, "pyramids", {
+				"blend": "lineardodge",
+				"dynamic": true,
+				"rgba": [170, 170, 170, [0.7, 1]]
+			}],
+			[0, "waves", {"blend": "softlight"}],
+			[0, "waves", {"blend": "softlight"}],
+			[0, "map", {
+				"xamount": [10, 144],
+				"yamount": [10, 144],
+				"xchannel": [0, 3],
+				"ychannel": [0, 3],
+				"xlayer": 0,
+				"ylayer": 0
+			}],
+			[0, "brightness", {"adjust": 20}],
+			[0, "contrast", {"adjust": 30}]
+		]
+	};
 
+    var canvas3 = generator.render(params).toCanvas();
+    context.drawImage(canvas3, 0, 0);
+    
 	return texture_image;
 }
 
