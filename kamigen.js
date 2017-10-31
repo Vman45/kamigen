@@ -18,9 +18,9 @@ function init() {
 	container.innerHTML = "";
 	container.appendChild( renderer.domElement );
 
-	scene = new THREE.Scene();
+	scene = new THREE.Scene(0x66CCFF, .0000001);
 	scene.background = new THREE.Color( 0x66CCFF );
-	
+	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.00023 );
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
 	camera.position.y = 800;
 	camera.position.z = - 1500;
