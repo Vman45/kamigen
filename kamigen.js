@@ -1,7 +1,7 @@
 //var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
-	oceanSide: 2000,
+	oceanSide: 200000,
 	size: .025,
 	distortionScale: 3.7,
 	alpha: 1.0
