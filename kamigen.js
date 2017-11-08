@@ -1,10 +1,10 @@
 //var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
-	oceanSide: 200000,
+	oceanSide: 20000,
 	size: .025,
 	distortionScale: 3.7,
-	alpha: 1.0
+	alpha: 0.9
 };
 var waterNormals;
 var container, stats;
@@ -27,8 +27,8 @@ function init() {
 
 	scene = new THREE.Scene(0x66CCFF, .0000001);
 	scene.background = new THREE.Color( 0x66CCFF );
-	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.00023 );
-	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0001123 );
+	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 40000 );
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
@@ -85,7 +85,8 @@ function setWater() {
 			sunColor: 0xffffff,
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
-			fog: scene.fog != undefined
+			fog: scene.fog != undefined,
+			side: THREE.DoubleSide
 		}
 	);
 
