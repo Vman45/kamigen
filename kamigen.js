@@ -1,5 +1,12 @@
-var generator = tgen.init(256, 256);
-var groundMirror;
+//var generator = tgen.init(256, 256);
+var water, light;
+var parameters = {
+	oceanSide: 2000,
+	size: .025,
+	distortionScale: 3.7,
+	alpha: 1.0
+};
+var waterNormals;
 var container, stats;
 var keyboard, ship;
 var camera, camera_controls, scene, renderer;
@@ -25,7 +32,7 @@ function init() {
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
-	var light = new THREE.PointLight( 0xffffff );
+	light = new THREE.PointLight( 0xffffff );
 	light.position.copy( camera.position );
 	scene.add( light );
 	
@@ -33,36 +40,8 @@ function init() {
 	camera_controls.movementSpeed = 500;
 	camera_controls.lookSpeed = 0.05;
 
-	water_geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
-	water_geometry.rotateX( - Math.PI / 2 );
-	for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
-		water_geometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
-	}
-	var canvas = draw_texture();
-	
-	texture = new THREE.Texture(canvas);
-	texture.anisotropy  = renderer.capabilities.getMaxAnisotropy();
-	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.offset.set( 0, 0 );
-    texture.repeat.set( 10, 10 );
-	texture.needsUpdate = true;
+	setWater();
 
-	material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.8 } );
-
-	water = new THREE.Mesh( water_geometry, material );
-	scene.add( water );
-	var WIDTH = window.innerWidth;
-	var HEIGHT = window.innerHeight;
-	groundMirror = new THREE.Mirror( 20000, 20000, {
-		clipBias: -0.0001,
-		textureWidth: WIDTH * window.devicePixelRatio,
-		textureHeight: HEIGHT * window.devicePixelRatio,
-		color: 0x777777
-	} );
-	groundMirror.position.y = -100;
-	groundMirror.rotateX( - Math.PI / 2 );
-	scene.add( groundMirror );
-	
 	ship = drawShip();
 	ship.add(camera);
 	
@@ -88,6 +67,33 @@ function drawShip() {
 	ship.position.set(500, 500, 0);
 	
 	return ship;
+}
+
+function setWater() {
+	
+	water = new THREE.Water(
+		parameters.oceanSide * 5,
+		parameters.oceanSide * 5,
+		{
+			textureWidth: 512,
+			textureHeight: 512,
+			waterNormals: new THREE.TextureLoader().load( './libs/waternormals.jpg', function ( texture ) {
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			}),
+			alpha: 	parameters.alpha,
+			sunDirection: light.position.clone().normalize(),
+			sunColor: 0xffffff,
+			waterColor: 0x001e0f,
+			distortionScale: parameters.distortionScale,
+			fog: scene.fog != undefined
+		}
+	);
+
+	water.rotation.x = - Math.PI / 2;
+	water.receiveShadow = true;
+
+	scene.add( water );
+
 }
 
 function getFuselage() {
@@ -167,13 +173,13 @@ function animate() {
 function render() {
 	var delta = clock.getDelta(),
 		time = clock.getElapsedTime() * 10;
-	for ( var i = 0, l = water_geometry.vertices.length; i < l; i ++ ) {
-		water_geometry.vertices[ i ].y = 35 * Math.sin( i / 5 + ( time + i ) / 7 );
-	}
+
 	water.geometry.verticesNeedUpdate = true;
 	camera_controls.update( delta );
-	// draw_texture();
-	// texture.needsUpdate = true;
+	water.material.uniforms.time.value += 1.0 / 60.0;
+	water.material.uniforms.size.value = parameters.size;
+	water.material.uniforms.distortionScale.value = parameters.distortionScale;
+	water.material.uniforms.alpha.value = parameters.alpha;
 
 	if (keyboard.pressed("w")) {
 		ship.translateZ(10);
