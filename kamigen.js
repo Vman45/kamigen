@@ -75,8 +75,8 @@ function setWater() {
 		parameters.oceanSide * 5,
 		parameters.oceanSide * 5,
 		{
-			textureWidth: 512,
-			textureHeight: 512,
+			textureWidth: 1024,
+			textureHeight: 1024,
 			waterNormals: new THREE.TextureLoader().load( './libs/waternormals.jpg', function ( texture ) {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
