@@ -1,8 +1,8 @@
 //var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
-	oceanSide: 20000,
-	size: .025,
+	oceanSide: 450000,
+	size: .125,
 	distortionScale: 3.7,
 	alpha: 0.9
 };
@@ -14,27 +14,62 @@ var water, texture, water_geometry, material;
 var worldWidth = 128, worldDepth = 128,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
+var sky;
+var sunSphere;
+var effectController;
 init();
 animate();
+
+/* World building functions */
+function initSky() {
+	// Add Sky
+	sky = new THREE.Sky();
+	sky.scale.setScalar( 450000 );
+	scene.add( sky );
+
+	// Add Sun Helper
+	sunSphere = new THREE.Mesh(
+		new THREE.SphereBufferGeometry( 20000, 16, 8 ),
+		new THREE.MeshBasicMaterial( { color: 0xffffff } )
+	);
+	sunSphere.position.y = - 700000;
+	sunSphere.visible = false;
+	scene.add( sunSphere );
+
+	/// GUI
+
+	effectController  = {
+		turbidity: 10,
+		rayleigh: 2,
+		mieCoefficient: 0.005,
+		mieDirectionalG: 0.8,
+		luminance: 1,
+		inclination: 0.175, // elevation / inclination
+		azimuth: 0.25, // Facing front,
+		sun: ! true
+	};
+
+}
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({
+		antialias: true,
+		logarithmicDepthBuffer: true
+	});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.innerHTML = "";
 	container.appendChild( renderer.domElement );
 
-	scene = new THREE.Scene(0x66CCFF, .0000001);
-	scene.background = new THREE.Color( 0x66CCFF );
-	scene.fog = new THREE.FogExp2( 0x66CCFF, 0.0001123 );
-	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 40000 );
+	scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 900000 );
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
-	light = new THREE.PointLight( 0xffffff );
-	light.position.copy( camera.position );
-	scene.add( light );
+	light = new THREE.DirectionalLight(0xffeedd, 1);
+    light.position.set(0, - 2000, - 0).normalize();
+    scene.add(light);
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
 	camera_controls.movementSpeed = 500;
@@ -46,6 +81,9 @@ function init() {
 	ship.add(camera);
 	
 	scene.add( ship );
+
+	initSky();
+
 	stats = new Stats();
 	container.appendChild( stats.domElement );
 
@@ -64,7 +102,7 @@ function drawShip() {
 	ship.add(wingPort);
 	ship.add(wingStarboard);
 	ship.add(fuselage);
-	ship.position.set(500, 500, 0);
+	ship.position.set(500, 750, 0);
 	
 	return ship;
 }
@@ -82,7 +120,7 @@ function setWater() {
 			}),
 			alpha: 	parameters.alpha,
 			sunDirection: light.position.clone().normalize(),
-			sunColor: 0xffffff,
+			sunColor: 0x66CCFF,
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
 			fog: scene.fog != undefined,
@@ -169,7 +207,6 @@ function onWindowResize() {
 function animate() {
 	requestAnimationFrame( animate );
 	render();
-	stats.update();
 }
 function render() {
 	var delta = clock.getDelta(),
@@ -200,6 +237,31 @@ function render() {
 	if (keyboard.pressed("shift")) {
 		ship.translateY(-10);
 	}
+
+	if (effectController) {
+	    var distance = 400000;
+	  
+	    var uniforms = sky.material.uniforms;
+		uniforms.turbidity.value = effectController.turbidity;
+		uniforms.rayleigh.value = effectController.rayleigh;
+		uniforms.luminance.value = effectController.luminance;
+		uniforms.mieCoefficient.value = effectController.mieCoefficient;
+		uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+
+		var theta = Math.PI * ( effectController.inclination - 0.5 );
+		var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+
+		sunSphere.position.x = distance * Math.cos( phi );
+		sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+		sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
+		sunSphere.visible = effectController.sun;
+
+		uniforms.sunPosition.value.copy( sunSphere.position );
+	  }
+
+	TWEEN.update();
+	stats.update();
 	renderer.render( scene, camera );
 }
 
