@@ -2,7 +2,7 @@
 var water, light;
 var parameters = {
 	oceanSide: 450000,
-	size: .125,
+	size: .15337,
 	distortionScale: 3.7,
 	alpha: 0.8
 };
@@ -11,7 +11,7 @@ var container, stats;
 var keyboard, ship;
 var camera, camera_controls, scene, renderer;
 var water, texture, water_geometry, material;
-var worldWidth = 128, worldDepth = 128,
+var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 var sky;
@@ -130,7 +130,7 @@ function setWater() {
 		parameters.oceanSide * 5,
 		parameters.oceanSide * 5,
 		{
-			clipBias: 0,
+			clipBias: -0.0000001,
 			textureWidth: 1024,
 			textureHeight: 1024,
 			waterNormals: new THREE.TextureLoader().load( './libs/waternormals.jpg', function ( texture ) {
@@ -230,12 +230,7 @@ function render() {
 	var delta = clock.getDelta(),
 		time = clock.getElapsedTime() * 10;
 
-	water.geometry.verticesNeedUpdate = true;
-	camera_controls.update( delta );
 	water.material.uniforms.time.value += 1.0 / 60.0;
-	water.material.uniforms.size.value = parameters.size;
-	water.material.uniforms.distortionScale.value = parameters.distortionScale;
-	water.material.uniforms.alpha.value = parameters.alpha;
 
 	if (keyboard.pressed("w")) {
 		ship.translateZ(10);
@@ -257,9 +252,9 @@ function render() {
 	}
 
 	if (effectController) {
-	    var distance = 400000;
-	  
-	    var uniforms = sky.material.uniforms;
+		var distance = 400000;
+
+		var uniforms = sky.material.uniforms;
 		uniforms.turbidity.value = effectController.turbidity;
 		uniforms.rayleigh.value = effectController.rayleigh;
 		uniforms.luminance.value = effectController.luminance;
@@ -276,8 +271,9 @@ function render() {
 		sunSphere.visible = effectController.sun;
 
 		uniforms.sunPosition.value.copy( sunSphere.position );
-	  }
+	}
 
+	camera_controls.update( delta );
 	stats.update();
 	renderer.render( scene, camera );
 }
