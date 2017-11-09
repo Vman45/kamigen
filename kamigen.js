@@ -4,7 +4,7 @@ var parameters = {
 	oceanSide: 450000,
 	size: .125,
 	distortionScale: 3.7,
-	alpha: 0.9
+	alpha: 0.8
 };
 var waterNormals;
 var container, stats;
@@ -50,12 +50,27 @@ function initSky() {
 	};
 
 }
+function initLand() {
+	var data = generateHeight( worldWidth, worldDepth );
+	var geometry = new THREE.PlaneBufferGeometry( 15000, 15000, worldWidth - 1, worldDepth - 1 );
+	geometry.rotateX( - Math.PI / 2 );
+	var vertices = geometry.attributes.position.array;
+	for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
+		vertices[ j + 1 ] = data[ i ] * 10;
+	}
+	texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
+	texture.wrapS = THREE.ClampToEdgeWrapping;
+	texture.wrapT = THREE.ClampToEdgeWrapping;
+	var land  = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } ) );
+	land.position.y = -500;
+	land.position.z = 1000;
+	scene.add( land );
+}
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
 	renderer = new THREE.WebGLRenderer({
-		antialias: true,
-		logarithmicDepthBuffer: true
+		antialias: true
 	});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -68,7 +83,7 @@ function init() {
 	camera.position.z = - 1500;
 	
 	light = new THREE.DirectionalLight(0xffeedd, 1);
-    light.position.set(0, - 2000, - 0).normalize();
+    light.position.set(0, 2000, - 0).normalize();
     scene.add(light);
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -83,6 +98,8 @@ function init() {
 	scene.add( ship );
 
 	initSky();
+
+	initLand();
 
 	stats = new Stats();
 	container.appendChild( stats.domElement );
@@ -113,6 +130,7 @@ function setWater() {
 		parameters.oceanSide * 5,
 		parameters.oceanSide * 5,
 		{
+			clipBias: 0,
 			textureWidth: 1024,
 			textureHeight: 1024,
 			waterNormals: new THREE.TextureLoader().load( './libs/waternormals.jpg', function ( texture ) {
@@ -260,55 +278,63 @@ function render() {
 		uniforms.sunPosition.value.copy( sunSphere.position );
 	  }
 
-	TWEEN.update();
 	stats.update();
 	renderer.render( scene, camera );
 }
 
-function draw_texture () {
-	var delta = clock.getElapsedTime();
-	var texture_image = document.getElementById("waterTexture");
-	var height = 256;
-	var width = 256;
-	texture_image.height = height;
-	texture_image.width = width;
+function generateHeight( width, height ) {
+	var size = width * height, data = new Uint8Array( size ),
+	perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 1000;
 
-	var context = texture_image.getContext('2d');
-	var params = {
-		"width": 256,
-		"height": 256,
-		"items": [
-			[0, "pyramids", {"blend": "lighten", "rgba": [[0, 10], [20, 80], [150, 255], [0.7, 1]]}],
-			[0, "pyramids", {
-				"blend": "lineardodge",
-				"dynamic": true,
-				"rgba": [170, 170, 170, [0.7, 1]]
-			}],
-			[0, "waves", {"blend": "softlight"}],
-			[0, "waves", {"blend": "softlight"}],
-			[0, "map", {
-				"xamount": [10, 144],
-				"yamount": [10, 144],
-				"xchannel": [0, 3],
-				"ychannel": [0, 3],
-				"xlayer": 0,
-				"ylayer": 0
-			}],
-			[0, "brightness", {"adjust": 20}],
-			[0, "contrast", {"adjust": 30}]
-		]
-	};
-
-    var canvas3 = generator.render(params).toCanvas();
-    context.drawImage(canvas3, 0, 0);
-    
-	return texture_image;
+	for ( var j = 0; j < 4; j ++ ) {
+		for ( var i = 0; i < size; i ++ ) {
+			var x = i % width, y = ~~ ( i / width );
+			data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
+		}
+		quality *= 5;
+	}
+	return data;
 }
-
-function setPixel(imageData, x, y, r, g, b, a) {
-    var index = (x + y * imageData.width) * 4;
-    imageData.data[index+0] = r;
-    imageData.data[index+1] = g;
-    imageData.data[index+2] = b;
-    imageData.data[index+3] = a;
+function generateTexture( data, width, height ) {
+	var canvas, canvasScaled, context, image, imageData,
+	level, diff, vector3, sun, shade;
+	vector3 = new THREE.Vector3( 0, 0, 0 );
+	sun = new THREE.Vector3( 1, 1, 1 );
+	sun.normalize();
+	canvas = document.createElement( 'canvas' );
+	canvas.width = width;
+	canvas.height = height;
+	context = canvas.getContext( '2d' );
+	context.fillStyle = '#000';
+	context.fillRect( 0, 0, width, height );
+	image = context.getImageData( 0, 0, canvas.width, canvas.height );
+	imageData = image.data;
+	for ( var i = 0, j = 0, l = imageData.length; i < l; i += 4, j ++ ) {
+		vector3.x = data[ j - 2 ] - data[ j + 2 ];
+		vector3.y = 2;
+		vector3.z = data[ j - width * 2 ] - data[ j + width * 2 ];
+		vector3.normalize();
+		shade = vector3.dot( sun );
+		imageData[ i ] = ( 96 + shade * 128 ) * ( 0.5 + data[ j ] * 0.007 );
+		imageData[ i + 1 ] = ( 32 + shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
+		imageData[ i + 2 ] = ( shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
+	}
+	context.putImageData( image, 0, 0 );
+	// Scaled 4x
+	canvasScaled = document.createElement( 'canvas' );
+	canvasScaled.width = width * 4;
+	canvasScaled.height = height * 4;
+	context = canvasScaled.getContext( '2d' );
+	context.scale( 4, 4 );
+	context.drawImage( canvas, 0, 0 );
+	image = context.getImageData( 0, 0, canvasScaled.width, canvasScaled.height );
+	imageData = image.data;
+	for ( var i = 0, l = imageData.length; i < l; i += 4 ) {
+		var v = ~~ ( Math.random() * 5 );
+		imageData[ i ] += v;
+		imageData[ i + 1 ] += v;
+		imageData[ i + 2 ] += v;
+	}
+	context.putImageData( image, 0, 0 );
+	return canvasScaled;
 }

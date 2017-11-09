@@ -9,7 +9,7 @@
 
 THREE.Water = function ( width, height, options ) {
 
-	THREE.Mesh.call( this, new THREE.PlaneBufferGeometry( width, height ) );
+	THREE.Mesh.call( this, new THREE.PlaneBufferGeometry( width, height, 1000, 1000 ) );
 
 	var scope = this;
 
