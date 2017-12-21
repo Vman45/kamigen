@@ -1,7 +1,7 @@
 //var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
-	oceanSide: 450000,
+	oceanSide: 15000,
 	size: .15337,
 	distortionScale: 3.7,
 	alpha: 0.8
@@ -69,9 +69,7 @@ function initLand() {
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
-	renderer = new THREE.WebGLRenderer({
-		antialias: true
-	});
+	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.innerHTML = "";
@@ -82,9 +80,16 @@ function init() {
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
-	light = new THREE.DirectionalLight(0xffeedd, 1);
-    light.position.set(0, 2000, - 0).normalize();
-    scene.add(light);
+	light = new THREE.DirectionalLight( 0xffffff, 0.8 );
+	light.position.set( - 30, 30, 30 );
+	light.castShadow = true;
+	light.shadow.camera.top = 45;
+	light.shadow.camera.right = 40;
+	light.shadow.camera.left = light.shadow.camera.bottom = -40;
+	light.shadow.camera.near = 1;
+	light.shadow.camera.far = 200;
+	scene.add( light );
+
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
 	camera_controls.movementSpeed = 500;
@@ -125,15 +130,14 @@ function drawShip() {
 }
 
 function setWater() {
-	
+	var waterGeometry = new THREE.PlaneBufferGeometry( parameters.oceanSide * 5, parameters.oceanSide * 5, 1000, 1000 );
 	water = new THREE.Water(
-		parameters.oceanSide * 5,
-		parameters.oceanSide * 5,
+		waterGeometry,
 		{
 			clipBias: -0.0000001,
 			textureWidth: 1024,
 			textureHeight: 1024,
-			waterNormals: new THREE.TextureLoader().load( './libs/waternormals.jpg', function ( texture ) {
+			waterNormals: new THREE.TextureLoader().load( './vendor/waternormals.jpg', function ( texture ) {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
 			alpha: 	parameters.alpha,
