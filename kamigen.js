@@ -1,9 +1,9 @@
 //var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
-	oceanSide: 15000,
-	size: .15337,
-	distortionScale: 3.7,
+	oceanSide: 150000,
+	size: 1,
+	distortionScale: 50,
 	alpha: 0.8
 };
 var waterNormals;
@@ -36,20 +36,44 @@ function initSky() {
 	sunSphere.visible = false;
 	scene.add( sunSphere );
 
-	/// GUI
-
+	for (var i = 0; i < 100; i++) {
+		// Credit - https://stackoverflow.com/a/13455101/8255070
+		var x = Math.floor(Math.random()*99) + 1; // this will get a number between 1 and 99;
+		x *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
+		var y = Math.floor(Math.random()*99) + 1; // this will get a number between 1 and 99;
+		y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
+		addCloud(new THREE.Vector3(
+			(parameters.oceanSide / 100) * x,
+			2000 + 3250 * Math.random(),
+			(parameters.oceanSide / 100) * y)
+		);	
+	} 
+	
+	
+	// old GUI params
 	effectController  = {
 		turbidity: 10,
 		rayleigh: 2,
 		mieCoefficient: 0.005,
 		mieDirectionalG: 0.8,
 		luminance: 1,
-		inclination: 0.175, // elevation / inclination
-		azimuth: 0.25, // Facing front,
+		inclination: 0.475, // elevation / inclination
+		azimuth: 0.45, // Facing front,
 		sun: ! true
 	};
 
 }
+
+function addCloud(position) {
+	var spriteMap = new THREE.TextureLoader().load( "./vendor/cloud.png" );
+	var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
+	var sprite = new THREE.Sprite( spriteMaterial );
+	sprite.position.set(position.x, position.y, position.z);
+	var randomer = Math.random();
+	sprite.scale.set(1000 * randomer,1000 * randomer,1);
+	scene.add( sprite );
+}
+
 function initLand() {
 	var data = generateHeight( worldWidth, worldDepth );
 	var geometry = new THREE.PlaneBufferGeometry( 15000, 15000, worldWidth - 1, worldDepth - 1 );
@@ -76,7 +100,7 @@ function init() {
 	container.appendChild( renderer.domElement );
 
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 900000 );
+	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, parameters.oceanSide * 10 );
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
@@ -92,19 +116,17 @@ function init() {
 
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
-	camera_controls.movementSpeed = 500;
-	camera_controls.lookSpeed = 0.05;
-
+	camera_controls.target.set(0,0,0);
+	
 	setWater();
 
 	ship = drawShip();
-	ship.add(camera);
-	
+		
 	scene.add( ship );
+	ship.add(camera);
 
 	initSky();
-
-	initLand();
+	//initLand();
 
 	stats = new Stats();
 	container.appendChild( stats.domElement );
@@ -130,13 +152,13 @@ function drawShip() {
 }
 
 function setWater() {
-	var waterGeometry = new THREE.PlaneBufferGeometry( parameters.oceanSide * 5, parameters.oceanSide * 5, 1000, 1000 );
+	var waterGeometry = new THREE.CircleBufferGeometry( parameters.oceanSide * 5, 1000 );
 	water = new THREE.Water(
 		waterGeometry,
 		{
-			clipBias: -0.0000001,
-			textureWidth: 1024,
-			textureHeight: 1024,
+			clipBias: -0.00001,
+			textureWidth: 512,
+			textureHeight: 512,
 			waterNormals: new THREE.TextureLoader().load( './vendor/waternormals.jpg', function ( texture ) {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
@@ -146,7 +168,8 @@ function setWater() {
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
 			fog: scene.fog != undefined,
-			side: THREE.DoubleSide
+			side: THREE.DoubleSide,
+			size: parameters.size
 		}
 	);
 
@@ -158,20 +181,12 @@ function setWater() {
 }
 
 function getFuselage() {
-	var geometry = new THREE.CylinderGeometry( 15, 2, 50, 32 );
-	var material = new THREE.MeshBasicMaterial( {color: 0xffAA00} );
-	var nose = new THREE.Mesh( geometry, material );
-	nose.rotation.set(0, 0, Math.PI / 2);
-	nose.position.set(150, 0, 0);
+	var geometry = new THREE.OctahedronGeometry( 30, 1);
+	var material = new THREE.MeshToonMaterial( {color: 0xffAA00} );
+	var fuselage = new THREE.Mesh( geometry, material );
 
-	geometry = new THREE.CylinderGeometry( 15, 15, 250, 32 );
-	var body = new THREE.Mesh(geometry, material);
-	body.rotation.set(0, 0, Math.PI / 2);
-
-	var fuselage = new THREE.Object3D();
-	fuselage.add(nose);
-	fuselage.add(body);
-	fuselage.position.set(0,-120, 0);
+	fuselage.scale.set(5,1,1);
+	fuselage.position.set(0, -120, 0);
 	fuselage.rotation.set(0, -Math.PI / 2, 0);
 
 	return fuselage;
@@ -205,7 +220,7 @@ function getWing(side) {
 	}
 	var shape = new THREE.Shape( pts );
 	var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-	var material = new THREE.MeshLambertMaterial( { color: 0xFFAA00, wireframe: false } );
+	var material = new THREE.MeshToonMaterial( { color: 0xFFAA00, wireframe: false } );
 	var wing = new THREE.Mesh( geometry, material );
 	wing.rotation.set(0, Math.PI / 2 , Math.PI / 2);
 
@@ -223,19 +238,9 @@ function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	camera_controls.handleResize();
 }
 //
 function animate() {
-	requestAnimationFrame( animate );
-	render();
-}
-function render() {
-	var delta = clock.getDelta(),
-		time = clock.getElapsedTime() * 10;
-
-	water.material.uniforms.time.value += 1.0 / 60.0;
-
 	if (keyboard.pressed("w")) {
 		ship.translateZ(10);
 	}
@@ -255,6 +260,15 @@ function render() {
 		ship.translateY(-10);
 	}
 
+	requestAnimationFrame( animate );
+	render();
+}
+function render() {
+	var delta = clock.getDelta(),
+		time = clock.getElapsedTime() * 10;
+
+	water.material.uniforms.time.value += 1.0 / 60.0;
+
 	if (effectController) {
 		var distance = 400000;
 
@@ -272,69 +286,15 @@ function render() {
 		sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 		sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
 
+		light.position.set( sunSphere.position );
+
 		sunSphere.visible = effectController.sun;
 
 		uniforms.sunPosition.value.copy( sunSphere.position );
 	}
 
 	camera_controls.update( delta );
+	camera.lookAt(ship.position);
 	stats.update();
 	renderer.render( scene, camera );
-}
-
-function generateHeight( width, height ) {
-	var size = width * height, data = new Uint8Array( size ),
-	perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 1000;
-
-	for ( var j = 0; j < 4; j ++ ) {
-		for ( var i = 0; i < size; i ++ ) {
-			var x = i % width, y = ~~ ( i / width );
-			data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
-		}
-		quality *= 5;
-	}
-	return data;
-}
-function generateTexture( data, width, height ) {
-	var canvas, canvasScaled, context, image, imageData,
-	level, diff, vector3, sun, shade;
-	vector3 = new THREE.Vector3( 0, 0, 0 );
-	sun = new THREE.Vector3( 1, 1, 1 );
-	sun.normalize();
-	canvas = document.createElement( 'canvas' );
-	canvas.width = width;
-	canvas.height = height;
-	context = canvas.getContext( '2d' );
-	context.fillStyle = '#000';
-	context.fillRect( 0, 0, width, height );
-	image = context.getImageData( 0, 0, canvas.width, canvas.height );
-	imageData = image.data;
-	for ( var i = 0, j = 0, l = imageData.length; i < l; i += 4, j ++ ) {
-		vector3.x = data[ j - 2 ] - data[ j + 2 ];
-		vector3.y = 2;
-		vector3.z = data[ j - width * 2 ] - data[ j + width * 2 ];
-		vector3.normalize();
-		shade = vector3.dot( sun );
-		imageData[ i ] = ( 96 + shade * 128 ) * ( 0.5 + data[ j ] * 0.007 );
-		imageData[ i + 1 ] = ( 32 + shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
-		imageData[ i + 2 ] = ( shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
-	}
-	context.putImageData( image, 0, 0 );
-	// Scaled 4x
-	canvasScaled = document.createElement( 'canvas' );
-	canvasScaled.width = width * 4;
-	canvasScaled.height = height * 4;
-	context = canvasScaled.getContext( '2d' );
-	context.scale( 4, 4 );
-	context.drawImage( canvas, 0, 0 );
-	image = context.getImageData( 0, 0, canvasScaled.width, canvasScaled.height );
-	imageData = image.data;
-	for ( var i = 0, l = imageData.length; i < l; i += 4 ) {
-		var v = ~~ ( Math.random() * 5 );
-		imageData[ i ] += v;
-		imageData[ i + 1 ] += v;
-		imageData[ i + 2 ] += v;
-	}
-	context.putImageData( image, 0, 0 );
-	return canvasScaled;
 }
