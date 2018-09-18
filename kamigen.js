@@ -4,7 +4,7 @@ var parameters = {
 	oceanSide: 150000,
 	size: 1,
 	distortionScale: 50,
-	alpha: 0.8
+	alpha: 1
 };
 var waterNormals;
 var container, stats;
@@ -104,14 +104,7 @@ function init() {
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
-	light = new THREE.DirectionalLight( 0xffffff, 0.8 );
-	light.position.set( - 30, 30, 30 );
-	light.castShadow = true;
-	light.shadow.camera.top = 45;
-	light.shadow.camera.right = 40;
-	light.shadow.camera.left = light.shadow.camera.bottom = -40;
-	light.shadow.camera.near = 1;
-	light.shadow.camera.far = 200;
+	var light = new THREE.AmbientLight( 0xffffff ); // soft white light
 	scene.add( light );
 
 	
@@ -129,7 +122,7 @@ function init() {
 	//initLand();
 
 	stats = new Stats();
-	container.appendChild( stats.domElement );
+	document.getElementById( 'stats' ).appendChild( stats.domElement );
 
 	window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -139,13 +132,14 @@ function drawShip() {
 
 	var wingPort = getWing('port');
 	var wingStarboard = getWing('starboard');
-
+	var cockpit = getCockpit();
 	var fuselage = getFuselage();
 	
 	ship = new THREE.Object3D();
 	ship.add(wingPort);
 	ship.add(wingStarboard);
 	ship.add(fuselage);
+	ship.add(cockpit);
 	ship.position.set(500, 750, 0);
 	
 	return ship;
@@ -163,7 +157,7 @@ function setWater() {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
 			alpha: 	parameters.alpha,
-			sunDirection: light.position.clone().normalize(),
+			sunDirection: new THREE.Vector3(0,0,0),
 			sunColor: 0x66CCFF,
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
@@ -182,11 +176,27 @@ function setWater() {
 
 function getFuselage() {
 	var geometry = new THREE.OctahedronGeometry( 30, 1);
-	var material = new THREE.MeshToonMaterial( {color: 0xffAA00} );
+	var texture = new THREE.TextureLoader().load( './vendor/camo.png', function ( texture ) {
+		texture.wrapS = texture.wrapT = THREE.RepeatWrappinge;
+		texture.repeat.set( 1.8, 1. );
+	});
+	var material = new THREE.MeshLambertMaterial( { map: texture } );
 	var fuselage = new THREE.Mesh( geometry, material );
 
 	fuselage.scale.set(5,1,1);
 	fuselage.position.set(0, -120, 0);
+	fuselage.rotation.set(0, -Math.PI / 2, 0);
+
+	return fuselage;
+}
+
+function getCockpit() {
+	var geometry = new THREE.OctahedronGeometry( 30, 1);
+	var material = new THREE.MeshStandardMaterial( { color: 0x66CCFF, alpha: 0.85 } );
+	var fuselage = new THREE.Mesh( geometry, material );
+
+	fuselage.scale.set(.8,.35,.45);
+	fuselage.position.set(0, -110, 115);
 	fuselage.rotation.set(0, -Math.PI / 2, 0);
 
 	return fuselage;
@@ -220,7 +230,11 @@ function getWing(side) {
 	}
 	var shape = new THREE.Shape( pts );
 	var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-	var material = new THREE.MeshToonMaterial( { color: 0xFFAA00, wireframe: false } );
+	var texture = new THREE.TextureLoader().load( './vendor/camo.png', function ( texture ) {
+		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat.set( .005, .005 );
+	});
+	var material = new THREE.MeshToonMaterial( { map: texture, wireframe: false } );
 	var wing = new THREE.Mesh( geometry, material );
 	wing.rotation.set(0, Math.PI / 2 , Math.PI / 2);
 
@@ -266,9 +280,9 @@ function animate() {
 function render() {
 	var delta = clock.getDelta(),
 		time = clock.getElapsedTime() * 10;
-
+	
 	water.material.uniforms.time.value += 1.0 / 60.0;
-
+	
 	if (effectController) {
 		var distance = 400000;
 
@@ -286,8 +300,6 @@ function render() {
 		sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 		sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
 
-		light.position.set( sunSphere.position );
-
 		sunSphere.visible = effectController.sun;
 
 		uniforms.sunPosition.value.copy( sunSphere.position );
@@ -296,5 +308,6 @@ function render() {
 	camera_controls.update( delta );
 	camera.lookAt(ship.position);
 	stats.update();
+
 	renderer.render( scene, camera );
 }
