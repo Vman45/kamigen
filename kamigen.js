@@ -1,16 +1,15 @@
-//var generator = tgen.init(256, 256);
 var water, light;
 var parameters = {
 	oceanSide: 150000,
 	size: 1,
-	distortionScale: 50,
+	distortionScale: 8,
 	alpha: 1
 };
 var waterNormals;
 var container, stats;
 var keyboard, ship;
 var camera, camera_controls, scene, renderer;
-var water, texture, water_geometry, material;
+var water, texture, water_geometry, material, particle;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
@@ -150,9 +149,9 @@ function setWater() {
 	water = new THREE.Water(
 		waterGeometry,
 		{
-			clipBias: -0.00001,
-			textureWidth: 512,
-			textureHeight: 512,
+			clipBias: -0.000001,
+			textureWidth: 1024,
+			textureHeight: 1024,
 			waterNormals: new THREE.TextureLoader().load( './vendor/waternormals.jpg', function ( texture ) {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
@@ -192,7 +191,7 @@ function getFuselage() {
 
 function getCockpit() {
 	var geometry = new THREE.OctahedronGeometry( 30, 1);
-	var material = new THREE.MeshStandardMaterial( { color: 0x66CCFF, alpha: 0.85 } );
+	var material = new THREE.MeshToonMaterial( { color: 0x66CCFF, alpha: 0.85 } );
 	var fuselage = new THREE.Mesh( geometry, material );
 
 	fuselage.scale.set(.8,.35,.45);
@@ -253,9 +252,11 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
-//
+
 function animate() {
+	TWEEN.update();
 	if (keyboard.pressed("w")) {
+		initParticles();		
 		ship.translateZ(10);
 	}
 	if (keyboard.pressed("s")) {
@@ -273,7 +274,7 @@ function animate() {
 	if (keyboard.pressed("shift")) {
 		ship.translateY(-10);
 	}
-
+	
 	requestAnimationFrame( animate );
 	render();
 }
@@ -310,4 +311,48 @@ function render() {
 	stats.update();
 
 	renderer.render( scene, camera );
+}
+
+function generateSprite() {
+	var canvas = document.createElement( 'canvas' );
+	canvas.width = 8;
+	canvas.height = 8;
+	var context = canvas.getContext( '2d' );
+	var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
+	gradient.addColorStop( 0, 'rgba(255,255,255,1)' );
+	gradient.addColorStop( 0.3, 'rgba(0,255,0,1)' );
+	gradient.addColorStop( 0.5, 'rgba(0,64,0,1)' );
+	gradient.addColorStop( 1, 'rgba(0,0,0,1)' );
+	context.fillStyle = gradient;
+	context.fillRect( 0, 0, canvas.width, canvas.height );
+	return canvas;
+}
+
+function initParticles() {
+	var fire_material = new THREE.SpriteMaterial( {
+		map: new THREE.CanvasTexture( generateSprite() ),
+		blending: THREE.AdditiveBlending
+	} );
+
+	var scale = Math.random() * 32 + 16;
+	var right_thruster = new THREE.Sprite( fire_material );
+	right_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
+	right_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
+	right_thruster.translateX(-150);
+	initParticle(right_thruster, scale);
+
+	var left_thruster = new THREE.Sprite( fire_material );
+	left_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
+	left_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
+	left_thruster.translateX(150);
+	initParticle(left_thruster, scale);
+}
+
+function initParticle( particle, scale ) {
+	particle.scale.x = particle.scale.y = scale;
+	particle.translateY(-120);
+	new TWEEN.Tween( particle.scale )
+		.to( { x: 0.01, y: 0.01 }, 1000 )
+		.start();
+	scene.add( particle );
 }

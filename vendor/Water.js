@@ -30,8 +30,6 @@ THREE.Water = function ( geometry, options ) {
 	var side = options.side !== undefined ? options.side : THREE.FrontSide;
 	var fog = options.fog !== undefined ? options.fog : false;
 
-	//
-
 	var mirrorPlane = new THREE.Plane();
 	var normal = new THREE.Vector3();
 	var mirrorWorldPosition = new THREE.Vector3();
