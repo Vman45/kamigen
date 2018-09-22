@@ -79,7 +79,7 @@ function initLand() {
 	var map = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
 
 	var material = new THREE.MeshPhongMaterial( {
-      color: 0x8B4513,
+      color: 0x708b22,
       displacementMap: displacementMap,
       displacementScale: 24361.43,
       displacementBias: - 0.428408,
@@ -344,7 +344,8 @@ function generateSprite() {
 function initParticles() {
 	var fire_material = new THREE.SpriteMaterial( {
 		map: new THREE.CanvasTexture( generateSprite() ),
-		blending: THREE.AdditiveBlending
+		blending: THREE.AdditiveBlending,
+		alphaTest: 0.1
 	} );
 
 	var scale = Math.random() * 32 + 16;
