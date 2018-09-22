@@ -122,6 +122,7 @@ function init() {
 		
 	scene.add( ship );
 	ship.add(camera);
+	ship.rotateY(-Math.PI/2);
 
 	initSky();
 	initLand();
