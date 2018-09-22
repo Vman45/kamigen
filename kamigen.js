@@ -344,8 +344,7 @@ function generateSprite() {
 function initParticles() {
 	var fire_material = new THREE.SpriteMaterial( {
 		map: new THREE.CanvasTexture( generateSprite() ),
-		blending: THREE.AdditiveBlending,
-		alphaTest: 0.1
+		blending: THREE.AdditiveBlending
 	} );
 
 	var scale = Math.random() * 32 + 16;
