@@ -78,7 +78,7 @@ function initLand() {
 	var displacementMap = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
 	var map = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
 
-	var material = new THREE.MeshToonMaterial( {
+	var material = new THREE.MeshPhongMaterial( {
       color: 0x8B4513,
       displacementMap: displacementMap,
       displacementScale: 24361.43,
@@ -99,7 +99,9 @@ function initLand() {
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
-	renderer = new THREE.WebGLRenderer({antialias: true});
+	renderer = new THREE.WebGLRenderer({
+		// antialias: true
+	});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.innerHTML = "";
@@ -107,10 +109,14 @@ function init() {
 
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, parameters.oceanSide * 10 );
-	camera.position.y = 800;
-	camera.position.z = - 1500;
+	camera.position.y = 120;
+	camera.position.z = - 1600;
 	
-	var light = new THREE.AmbientLight( 0xffffff, 0.5 ); // soft white light
+
+	var amb_light = new THREE.AmbientLight( 0xffffff, Math.PI / 10 );
+	scene.add( amb_light );
+
+	light = new THREE.DirectionalLight( 0xffffff, 1.0 );
 	scene.add( light );
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -146,7 +152,7 @@ function drawShip() {
 	ship.add(wingStarboard);
 	ship.add(fuselage);
 	ship.add(cockpit);
-	ship.position.set(500, 750, 0);
+	ship.position.set(0, 750, 0);
 	
 	return ship;
 }
@@ -163,7 +169,7 @@ function setWater() {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
 			alpha: 	parameters.alpha,
-			sunDirection: new THREE.Vector3(0,0,0),
+			sunDirection: light.position.clone().normalize(),
 			sunColor: 0x66CCFF,
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
@@ -198,7 +204,7 @@ function getFuselage() {
 
 function getCockpit() {
 	var geometry = new THREE.OctahedronGeometry( 30, 1);
-	var material = new THREE.MeshToonMaterial( { color: 0x66CCFF, alpha: 0.85 } );
+	var material = new THREE.MeshPhongMaterial( { color: 0x226699, alpha: 0.85, shininess: 100 } );
 	var fuselage = new THREE.Mesh( geometry, material );
 
 	fuselage.scale.set(.8,.35,.45);
@@ -240,7 +246,7 @@ function getWing(side) {
 		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 		texture.repeat.set( .005, .005 );
 	});
-	var material = new THREE.MeshToonMaterial( { map: texture, wireframe: false } );
+	var material = new THREE.MeshPhongMaterial( { map: texture, wireframe: false } );
 	var wing = new THREE.Mesh( geometry, material );
 	wing.rotation.set(0, Math.PI / 2 , Math.PI / 2);
 
@@ -292,7 +298,7 @@ function render() {
 	water.material.uniforms.time.value += 1.0 / 60.0;
 	
 	if (effectController) {
-		var distance = 400000;
+		var distance = 40000;
 
 		var uniforms = sky.material.uniforms;
 		uniforms.turbidity.value = effectController.turbidity;
@@ -301,14 +307,14 @@ function render() {
 		uniforms.mieCoefficient.value = effectController.mieCoefficient;
 		uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
 
+		sunSphere.visible = effectController.sun;
+
 		var theta = Math.PI * ( effectController.inclination - 0.5 );
 		var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
 
-		sunSphere.position.x = distance * Math.cos( phi );
-		sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-		sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
-		sunSphere.visible = effectController.sun;
+		light.position.x = sunSphere.position.x = distance * Math.cos( phi );
+		light.position.y = sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+		light.position.z = sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );	
 
 		uniforms.sunPosition.value.copy( sunSphere.position );
 	}
