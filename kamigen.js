@@ -1,3 +1,4 @@
+var NEAR = 1e-6, FAR = 1e27;
 var water, light;
 var parameters = {
 	oceanSide: 150000,
@@ -43,7 +44,7 @@ function initSky() {
 		y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
 		addCloud(new THREE.Vector3(
 			(parameters.oceanSide / 100) * x,
-			2000 + 3250 * Math.random(),
+			5000 + 9250 * Math.random(),
 			(parameters.oceanSide / 100) * y)
 		);	
 	} 
@@ -57,7 +58,7 @@ function initSky() {
 		mieDirectionalG: 0.8,
 		luminance: 1,
 		inclination: 0.475, // elevation / inclination
-		azimuth: 0.45, // Facing front,
+		azimuth: 5, // Facing front,
 		sun: ! true
 	};
 
@@ -74,25 +75,31 @@ function addCloud(position) {
 }
 
 function initLand() {
-	var data = generateHeight( worldWidth, worldDepth );
-	var geometry = new THREE.PlaneBufferGeometry( 15000, 15000, worldWidth - 1, worldDepth - 1 );
-	geometry.rotateX( - Math.PI / 2 );
-	var vertices = geometry.attributes.position.array;
-	for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
-		vertices[ j + 1 ] = data[ i ] * 10;
-	}
-	texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
-	texture.wrapS = THREE.ClampToEdgeWrapping;
-	texture.wrapT = THREE.ClampToEdgeWrapping;
-	var land  = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } ) );
-	land.position.y = -500;
-	land.position.z = 1000;
+	var displacementMap = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
+	var map = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
+
+	var material = new THREE.MeshToonMaterial( {
+      color: 0x8B4513,
+      displacementMap: displacementMap,
+      displacementScale: 24361.43,
+      displacementBias: - 0.428408,
+      map: map,
+      side: THREE.DoubleSide
+  } );
+	var geometry = new THREE.PlaneGeometry( 200000, 200000, 100, 100 );
+	
+	var land  = new THREE.Mesh( geometry, material ) ;
+	land.position.y = -100;
+	land.position.z =  -10000;
+	land.position.x = - 150000;
+	land.rotation.z = - Math.PI / 4;
+	land.rotation.x = - Math.PI / 2;
 	scene.add( land );
 }
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({antialias: true});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.innerHTML = "";
@@ -103,9 +110,8 @@ function init() {
 	camera.position.y = 800;
 	camera.position.z = - 1500;
 	
-	var light = new THREE.AmbientLight( 0xffffff ); // soft white light
+	var light = new THREE.AmbientLight( 0xffffff, 0.5 ); // soft white light
 	scene.add( light );
-
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
 	camera_controls.target.set(0,0,0);
@@ -118,7 +124,7 @@ function init() {
 	ship.add(camera);
 
 	initSky();
-	//initLand();
+	initLand();
 
 	stats = new Stats();
 	document.getElementById( 'stats' ).appendChild( stats.domElement );
@@ -257,10 +263,10 @@ function animate() {
 	TWEEN.update();
 	if (keyboard.pressed("w")) {
 		initParticles();		
-		ship.translateZ(10);
+		ship.translateZ(20);
 	}
 	if (keyboard.pressed("s")) {
-		ship.translateZ(-10);
+		ship.translateZ(-20);
 	}
 	if (keyboard.pressed("a")) {
 		ship.rotateY(Math.PI / 180);
@@ -269,10 +275,10 @@ function animate() {
 		ship.rotateY(-Math.PI / 180);
 	}
 	if (keyboard.pressed(" ")) {
-		ship.translateY(10);
+		ship.translateY(20);
 	}
 	if (keyboard.pressed("shift")) {
-		ship.translateY(-10);
+		ship.translateY(-20);
 	}
 	
 	requestAnimationFrame( animate );
