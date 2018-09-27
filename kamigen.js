@@ -253,11 +253,11 @@ function getWing(side) {
 	
 
 	if (side == 'port') {
-		wing.position.set(-120,-240,0);
+		wing.position.set(-120,-240,-10);
 		wing.rotation.set(0, Math.PI / 3 , -Math.PI / 2);
 	}
 	if (side == 'starboard') {
-		wing.position.set(120,-240,0);
+		wing.position.set(120,-240,-10);
 		wing.rotation.set(0, ((2 * Math.PI) / 3) , -Math.PI / 2);
 	}
 	
@@ -337,12 +337,13 @@ var fire_material = new THREE.SpriteMaterial( {
 function initParticles() {
 
 	var scale = Math.random() * 32 + 16;
+	var thrust = 360 * Math.random();
 	var right_thruster = new THREE.Sprite( fire_material );
 	right_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
 	right_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
 	right_thruster.translateX(-150);
 	right_thruster.translateZ(-80);
-	right_thruster.rotateY(Math.random());
+	right_thruster.material.rotation = thrust;
 	initParticle(right_thruster, scale);
 
 	var left_thruster = new THREE.Sprite( fire_material );
@@ -350,6 +351,7 @@ function initParticles() {
 	left_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
 	left_thruster.translateX(150);
 	left_thruster.translateZ(-80);
+	left_thruster.material.rotation = -thrust;
 	initParticle(left_thruster, scale);
 }
 
@@ -357,6 +359,7 @@ function initParticle( particle, scale ) {
 	particle.scale.x = particle.scale.y = scale;
 	particle.translateY(-120);
 	new TWEEN.Tween( particle.scale )
+		.onComplete(function(){ scene.remove(particle) })
 		.to( { x: 0.01, y: 0.01 }, 1000 )
 		.start();
 	scene.add( particle );
