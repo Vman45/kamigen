@@ -75,26 +75,28 @@ function addCloud(position) {
 }
 
 function initLand() {
-	var displacementMap = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
-	var map = THREE.ImageUtils.loadTexture( "/assets/camiguin Height Map (Merged).png" );
+	var displacementMap = new THREE.TextureLoader().load( "/assets/camiguin Height Map (Merged).png" );
+	var map = new THREE.TextureLoader().load( "/assets/camiguin texture.png" );
 
 	var material = new THREE.MeshPhongMaterial( {
-      color: 0x708b22,
+      color: 0x558b22,
       displacementMap: displacementMap,
       displacementScale: 24361.43,
       displacementBias: - 0.428408,
+      emissiveMap: displacementMap,
       map: map,
       side: THREE.DoubleSide
   } );
-	var geometry = new THREE.PlaneGeometry( 200000, 200000, 100, 100 );
+	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 175, 175 );
 	
 	var land  = new THREE.Mesh( geometry, material ) ;
-	land.position.y = -100;
+	land.position.y = -1500;
 	land.position.z =  -10000;
 	land.position.x = - 150000;
 	land.rotation.z = - Math.PI / 4;
 	land.rotation.x = - Math.PI / 2;
 	scene.add( land );
+	console.log(land);
 }
 function init() {
 	keyboard	= new THREEx.KeyboardState();
@@ -187,24 +189,24 @@ function setWater() {
 }
 
 function getFuselage() {
-	var geometry = new THREE.OctahedronGeometry( 30, 1);
+	var geometry = new THREE.OctahedronGeometry( 30, 2);
 	var texture = new THREE.TextureLoader().load( './vendor/camo.png', function ( texture ) {
-		texture.wrapS = texture.wrapT = THREE.RepeatWrappinge;
-		texture.repeat.set( 1.8, 1. );
+		texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping;
+		texture.repeat.set( 1., 2.5 );
 	});
 	var material = new THREE.MeshLambertMaterial( { map: texture } );
 	var fuselage = new THREE.Mesh( geometry, material );
 
-	fuselage.scale.set(5,1,1);
+	fuselage.scale.set(1,5,1);
 	fuselage.position.set(0, -120, 0);
-	fuselage.rotation.set(0, -Math.PI / 2, 0);
+	fuselage.rotation.set(-Math.PI / 2, Math.PI / 2, 0);
 
 	return fuselage;
 }
 
 function getCockpit() {
 	var geometry = new THREE.OctahedronGeometry( 30, 1);
-	var material = new THREE.MeshPhongMaterial( { color: 0x226699, alpha: 0.85, shininess: 100 } );
+	var material = new THREE.MeshToonMaterial( { color: 0x003366, shininess: 100 } );
 	var fuselage = new THREE.Mesh( geometry, material );
 
 	fuselage.scale.set(.8,.35,.45);
@@ -246,15 +248,17 @@ function getWing(side) {
 		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 		texture.repeat.set( .005, .005 );
 	});
-	var material = new THREE.MeshPhongMaterial( { map: texture, wireframe: false } );
+	var material = new THREE.MeshLambertMaterial( { map: texture, wireframe: false } );
 	var wing = new THREE.Mesh( geometry, material );
-	wing.rotation.set(0, Math.PI / 2 , Math.PI / 2);
+	
 
 	if (side == 'port') {
-		wing.position.set(-130,0,0);	
+		wing.position.set(-120,-240,0);
+		wing.rotation.set(0, Math.PI / 3 , -Math.PI / 2);
 	}
 	if (side == 'starboard') {
-		wing.position.set(130,0,0);
+		wing.position.set(120,-240,0);
+		wing.rotation.set(0, ((2 * Math.PI) / 3) , -Math.PI / 2);
 	}
 	
 	return wing;
@@ -326,38 +330,26 @@ function render() {
 	renderer.render( scene, camera );
 }
 
-function generateSprite() {
-	var canvas = document.createElement( 'canvas' );
-	canvas.width = 8;
-	canvas.height = 8;
-	var context = canvas.getContext( '2d' );
-	var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
-	gradient.addColorStop( 0, 'rgba(255,255,255,1)' );
-	gradient.addColorStop( 0.3, 'rgba(0,255,0,1)' );
-	gradient.addColorStop( 0.5, 'rgba(0,64,0,1)' );
-	gradient.addColorStop( 1, 'rgba(0,0,0,1)' );
-	context.fillStyle = gradient;
-	context.fillRect( 0, 0, canvas.width, canvas.height );
-	return canvas;
-}
-
+var fire_material = new THREE.SpriteMaterial( {
+	map: new THREE.TextureLoader().load( './vendor/smoke.png'),
+	blending: THREE.AdditiveBlending
+} );
 function initParticles() {
-	var fire_material = new THREE.SpriteMaterial( {
-		map: new THREE.CanvasTexture( generateSprite() ),
-		blending: THREE.AdditiveBlending
-	} );
 
 	var scale = Math.random() * 32 + 16;
 	var right_thruster = new THREE.Sprite( fire_material );
 	right_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
 	right_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
 	right_thruster.translateX(-150);
+	right_thruster.translateZ(-80);
+	right_thruster.rotateY(Math.random());
 	initParticle(right_thruster, scale);
 
 	var left_thruster = new THREE.Sprite( fire_material );
 	left_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
 	left_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
 	left_thruster.translateX(150);
+	left_thruster.translateZ(-80);
 	initParticle(left_thruster, scale);
 }
 
