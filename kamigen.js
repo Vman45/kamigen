@@ -75,34 +75,51 @@ function addCloud(position) {
 }
 
 function initLand() {
-	var displacementMap = new THREE.TextureLoader().load( "/assets/camiguin Height Map (Merged).png" );
-	var map = new THREE.TextureLoader().load( "/assets/camiguin texture.png" );
+	var displacementMap = new THREE.TextureLoader().load( "/assets/height.png" );
+	var map = new THREE.TextureLoader().load( "/assets/texture.png" );
 
-	var material = new THREE.MeshPhongMaterial( {
-      color: 0x558b22,
-      displacementMap: displacementMap,
-      displacementScale: 24361.43,
-      displacementBias: - 0.428408,
-      emissiveMap: displacementMap,
-      map: map,
-      side: THREE.DoubleSide
-  } );
-	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 175, 175 );
-	
-	var land  = new THREE.Mesh( geometry, material ) ;
-	land.position.y = -1500;
-	land.position.z =  -10000;
-	land.position.x = - 150000;
-	land.rotation.z = - Math.PI / 4;
+	var sandMap = new THREE.TextureLoader().load( "/assets/sand.jpg", function ( texture ) {
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+		});
+	var forestMap = new THREE.TextureLoader().load( "/assets/forest.jpg" , function ( texture ) {
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			});
+	var volcanoMap = new THREE.TextureLoader().load( "/assets/volcano.jpg" , function ( texture ) {
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			});
+
+ 	var customMaterial = new THREE.ShaderMaterial( 
+	{
+	  uniforms: {
+			bumpTexture:	{ type: "t", value: displacementMap },
+			bumpScale:	  { type: "f", value: 24361.43 },
+			texture:	{ type: "t", value: map },
+			sandyTexture:	{ type: "t", value: sandMap },
+			grassTexture:	{ type: "t", value: forestMap },
+			rockyTexture:	{ type: "t", value: volcanoMap },
+		},
+		vertexShader:   document.getElementById( 'landVertexShader'   ).textContent,
+		fragmentShader: document.getElementById( 'landFragmentShader' ).textContent,
+		transparent: true
+	}   );
+	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 500, 500 );
+	var land  = new THREE.Mesh( geometry, customMaterial ) ;
+	land.position.y = -900;
+	land.position.z =  -5000;
+	land.position.x = - 75000;
 	land.rotation.x = - Math.PI / 2;
 	scene.add( land );
 	console.log(land);
+	var box = new THREE.BoxHelper( land, 0xffff00 );
+	box.update();
+	scene.add( box );
 }
 function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
 	renderer = new THREE.WebGLRenderer({
-		// antialias: true
+		// antialias: true,
+		logarithmicDepthBuffer: false
 	});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -114,11 +131,10 @@ function init() {
 	camera.position.y = 120;
 	camera.position.z = - 1600;
 	
-
 	var amb_light = new THREE.AmbientLight( 0xffffff, Math.PI / 10 );
 	scene.add( amb_light );
 
-	light = new THREE.DirectionalLight( 0xffffff, 1.0 );
+	light = new THREE.DirectionalLight( 0xffffff, Math.PI / 2 );
 	scene.add( light );
 	
 	camera_controls = new THREE.OrbitControls( camera, renderer.domElement );

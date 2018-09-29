@@ -69,6 +69,55 @@
     <div id="stats"></div>
     <canvas id="waterTexture"></canvas>
   </body>
+  <script id="landVertexShader" type="x-shader/x-vertex">
+    // Credit stemkoski.github.io/Three.js/Shader-Heightmap-Textures.html
+    uniform sampler2D bumpTexture;
+    uniform float bumpScale;
+
+    varying float vAmount;
+    varying vec2 vUV;
+
+    void main() 
+    { 
+      vUV = uv;
+      vec4 bumpData = texture2D( bumpTexture, uv );
+      
+      vAmount = bumpData.r; // assuming map is grayscale it doesn't matter if you use r, g, or b.
+      
+      // move the position along the normal
+      vec3 newPosition = position + normal * bumpScale * vAmount;
+      
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+    }
+  </script>
+  <script id="landFragmentShader" type="x-shader/x-vertex">
+    // Credit stemkoski.github.io/Three.js/Shader-Heightmap-Textures.html
+    uniform sampler2D sandyTexture;
+    uniform sampler2D grassTexture;
+    uniform sampler2D rockyTexture;
+    uniform sampler2D texture;
+
+    varying vec2 vUV;
+
+    varying float vAmount;
+
+    void main() 
+    {
+      if (vAmount < 0.01) {
+        gl_FragColor = texture2D( sandyTexture, vUV * 50.0 );
+        gl_FragColor.a = 0.0;
+      }
+      else {
+        vec4 sandy = (smoothstep(0.01, 0.03, vAmount) - smoothstep(0.05, 0.07, vAmount)) * texture2D( sandyTexture, vUV * 50.0 );
+        vec4 grass = (smoothstep(0.05, 0.07, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( grassTexture, vUV * 50.0 );
+        vec4 rocky = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( rockyTexture, vUV * 25.0 );
+        gl_FragColor = sandy + grass + rocky;
+        gl_FragColor -= (texture2D( texture, vUV ) * .4);
+        gl_FragColor *= 1.5;
+        gl_FragColor.a = 1.0;
+      }
+    }  
+  </script>
   <script src="./vendor/jquery.min.js"></script>
   <script src="./vendor/Tween.js"></script>
   <script src="./vendor/three.js"></script>
