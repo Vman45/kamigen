@@ -102,7 +102,7 @@ function initLand() {
 		fragmentShader: document.getElementById( 'landFragmentShader' ).textContent,
 		transparent: true
 	}   );
-	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 500, 500 );
+	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 200, 200 );
 	var land  = new THREE.Mesh( geometry, customMaterial ) ;
 	land.position.y = -900;
 	land.position.z =  -5000;
@@ -127,7 +127,7 @@ function init() {
 	container.appendChild( renderer.domElement );
 
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, parameters.oceanSide * 10 );
+	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 100, parameters.oceanSide * 10000 );
 	camera.position.y = 120;
 	camera.position.z = - 1600;
 	
