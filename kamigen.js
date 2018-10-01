@@ -14,7 +14,7 @@ var water, texture, water_geometry, material, particle;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
-var sky;
+var land, sky;
 var sunSphere;
 var effectController;
 init();
@@ -93,17 +93,18 @@ function initLand() {
 	  uniforms: {
 			bumpTexture:	{ type: "t", value: displacementMap },
 			bumpScale:	  { type: "f", value: 24361.43 },
-			texture:	{ type: "t", value: map },
+			texture:			{ type: "t", value: map },
 			sandyTexture:	{ type: "t", value: sandMap },
 			grassTexture:	{ type: "t", value: forestMap },
 			rockyTexture:	{ type: "t", value: volcanoMap },
+			sunDirection: { type: "v3", value: light.position.clone().normalize() }
 		},
 		vertexShader:   document.getElementById( 'landVertexShader'   ).textContent,
 		fragmentShader: document.getElementById( 'landFragmentShader' ).textContent,
 		transparent: true
 	}   );
 	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 200, 200 );
-	var land  = new THREE.Mesh( geometry, customMaterial ) ;
+	land  = new THREE.Mesh( geometry, customMaterial ) ;
 	land.position.y = -900;
 	land.position.z =  -5000;
 	land.position.x = - 75000;
@@ -316,6 +317,8 @@ function render() {
 		time = clock.getElapsedTime() * 10;
 	
 	water.material.uniforms.time.value += 1.0 / 60.0;
+
+	land.material.uniforms.sunDirection = light.position.clone().normalize();
 	
 	if (effectController) {
 		var distance = 40000;

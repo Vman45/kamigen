@@ -70,36 +70,47 @@
     <canvas id="waterTexture"></canvas>
   </body>
   <script id="landVertexShader" type="x-shader/x-vertex">
-    // Credit stemkoski.github.io/Three.js/Shader-Heightmap-Textures.html
     uniform sampler2D bumpTexture;
     uniform float bumpScale;
 
     varying float vAmount;
     varying vec2 vUV;
+    varying vec4 worldPosition;
 
     void main() 
     { 
       vUV = uv;
       vec4 bumpData = texture2D( bumpTexture, uv );
-      
+     
       vAmount = bumpData.r; // assuming map is grayscale it doesn't matter if you use r, g, or b.
       
       // move the position along the normal
       vec3 newPosition = position + normal * bumpScale * vAmount;
+
+      worldPosition = modelMatrix * vec4( position, 1.0 );
       
       gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
     }
   </script>
   <script id="landFragmentShader" type="x-shader/x-vertex">
-    // Credit stemkoski.github.io/Three.js/Shader-Heightmap-Textures.html
     uniform sampler2D sandyTexture;
     uniform sampler2D grassTexture;
     uniform sampler2D rockyTexture;
     uniform sampler2D texture;
+    uniform vec3 sunDirection;
 
     varying vec2 vUV;
-
     varying float vAmount;
+    varying vec4 worldPosition;
+
+    // Shade island based on sun direction.
+    float sunshadeIsland() {
+      float d = length(vUV);
+      float r = 0.55;
+      float c = smoothstep(d, d-r, r);
+      
+      return c;
+    }
 
     void main() 
     {
@@ -112,8 +123,8 @@
         vec4 grass = (smoothstep(0.05, 0.07, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( grassTexture, vUV * 50.0 );
         vec4 rocky = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( rockyTexture, vUV * 25.0 );
         gl_FragColor = sandy + grass + rocky;
-        gl_FragColor -= (texture2D( texture, vUV ) * .4);
-        gl_FragColor *= 1.5;
+        gl_FragColor -= (texture2D( texture, vUV ) * sunshadeIsland());
+        gl_FragColor *= 1.2;
         gl_FragColor.a = 1.0;
       }
     }  
