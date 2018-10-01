@@ -25,7 +25,7 @@ THREE.Sky = function () {
 		side: THREE.BackSide
 	} );
 
-	THREE.Mesh.call( this, new THREE.SphereBufferGeometry( 5, 32, 32 ), material );
+	THREE.Mesh.call( this, new THREE.SphereBufferGeometry( 1, 32, 32 ), material );
 
 };
 

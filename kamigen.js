@@ -24,7 +24,7 @@ animate();
 function initSky() {
 	// Add Sky
 	sky = new THREE.Sky();
-	sky.scale.setScalar( 450000 );
+	sky.scale.setScalar( parameters.oceanSide * 5 );
 	scene.add( sky );
 
 	// Add Sun Helper
@@ -57,10 +57,17 @@ function initSky() {
 		mieCoefficient: 0.005,
 		mieDirectionalG: 0.8,
 		luminance: 1,
-		inclination: 0.475, // elevation / inclination
-		azimuth: 5, // Facing front,
+		inclination: -1.1, // elevation / inclination
+		azimuth: -1.1, // Facing front,
 		sun: ! true
 	};
+
+	 var sun_cycle = new TWEEN.Tween(effectController)
+    .to({azimuth: 1.1}, 60000)
+    .to({inclination: 1.1}, 60000)
+    .repeat(Infinity)
+    .yoyo(true)
+    .start();
 
 }
 
@@ -88,28 +95,32 @@ function initLand() {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			});
 
+	var landSize = 200000;
+	
+	
  	var customMaterial = new THREE.ShaderMaterial( 
 	{
 	  uniforms: {
 			bumpTexture:	{ type: "t", value: displacementMap },
 			bumpScale:	  { type: "f", value: 24361.43 },
+			landSize:	  	{ type: "f", value: landSize },
 			texture:			{ type: "t", value: map },
 			sandyTexture:	{ type: "t", value: sandMap },
 			grassTexture:	{ type: "t", value: forestMap },
 			rockyTexture:	{ type: "t", value: volcanoMap },
-			sunDirection: { type: "v3", value: light.position.clone().normalize() }
+			sunPosition:  { type: "v3", value: light.position.clone() },
+			center: 			{ type: "v3", value: { x: 0, y: 0, z: 0} }
 		},
 		vertexShader:   document.getElementById( 'landVertexShader'   ).textContent,
 		fragmentShader: document.getElementById( 'landFragmentShader' ).textContent,
 		transparent: true
 	}   );
-	var geometry = new THREE.PlaneBufferGeometry( 200000, 200000, 200, 200 );
+	var geometry = new THREE.PlaneGeometry( landSize, landSize, 200, 200 );
 	land  = new THREE.Mesh( geometry, customMaterial ) ;
 	land.position.y = -900;
-	land.position.z =  -5000;
-	land.position.x = - 75000;
 	land.rotation.x = - Math.PI / 2;
 	scene.add( land );
+	land.geometry.computeBoundingBox();
 	console.log(land);
 	var box = new THREE.BoxHelper( land, 0xffff00 );
 	box.update();
@@ -171,7 +182,7 @@ function drawShip() {
 	ship.add(wingStarboard);
 	ship.add(fuselage);
 	ship.add(cockpit);
-	ship.position.set(0, 750, 0);
+	ship.position.set(0, 25000, 0);
 	
 	return ship;
 }
@@ -317,11 +328,9 @@ function render() {
 		time = clock.getElapsedTime() * 10;
 	
 	water.material.uniforms.time.value += 1.0 / 60.0;
-
-	land.material.uniforms.sunDirection = light.position.clone().normalize();
 	
 	if (effectController) {
-		var distance = 40000;
+		var distance = parameters.oceanSide;
 
 		var uniforms = sky.material.uniforms;
 		uniforms.turbidity.value = effectController.turbidity;
@@ -330,8 +339,6 @@ function render() {
 		uniforms.mieCoefficient.value = effectController.mieCoefficient;
 		uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
 
-		sunSphere.visible = effectController.sun;
-
 		var theta = Math.PI * ( effectController.inclination - 0.5 );
 		var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
 
@@ -339,7 +346,10 @@ function render() {
 		light.position.y = sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 		light.position.z = sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );	
 
-		uniforms.sunPosition.value.copy( sunSphere.position );
+		sunSphere.visible = effectController.sun;
+
+		sky.material.uniforms.sunPosition.value.copy( light.position.clone() );
+		land.material.uniforms.sunPosition.value.copy( light.position.clone() );
 	}
 
 	camera_controls.update( delta );
