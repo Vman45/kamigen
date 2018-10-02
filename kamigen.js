@@ -43,9 +43,9 @@ function initSky() {
 		var y = Math.floor(Math.random()*99) + 1; // this will get a number between 1 and 99;
 		y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
 		addCloud(new THREE.Vector3(
-			(parameters.oceanSide / 100) * x,
-			5000 + 9250 * Math.random(),
-			(parameters.oceanSide / 100) * y)
+			(parameters.oceanSide / 25) * x,
+			25000 + 25000 * Math.random(),
+			(parameters.oceanSide / 25) * y)
 		);	
 	} 
 	
@@ -73,11 +73,11 @@ function initSky() {
 
 function addCloud(position) {
 	var spriteMap = new THREE.TextureLoader().load( "./vendor/cloud.png" );
-	var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
+	var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff, alphaTest: 0.1 } );
 	var sprite = new THREE.Sprite( spriteMaterial );
 	sprite.position.set(position.x, position.y, position.z);
 	var randomer = Math.random();
-	sprite.scale.set(10000 * randomer,10000 * randomer,1);
+	sprite.scale.set(20000 * randomer,20000 * randomer,1);
 	scene.add( sprite );
 }
 
@@ -130,7 +130,7 @@ function init() {
 	keyboard	= new THREEx.KeyboardState();
 	container = document.getElementById( 'container' );
 	renderer = new THREE.WebGLRenderer({
-		// antialias: true,
+		antialias: false,
 		logarithmicDepthBuffer: false
 	});
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -345,8 +345,6 @@ function render() {
 		light.position.x = sunSphere.position.x = distance * Math.cos( phi );
 		light.position.y = sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 		light.position.z = sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );	
-
-		sunSphere.visible = effectController.sun;
 
 		sky.material.uniforms.sunPosition.value.copy( light.position.clone() );
 		land.material.uniforms.sunPosition.value.copy( light.position.clone() );
