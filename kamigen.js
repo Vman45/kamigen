@@ -44,7 +44,7 @@ function initSky() {
 		y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
 		addCloud(new THREE.Vector3(
 			(parameters.oceanSide / 25) * x,
-			25000 + 25000 * Math.random(),
+			125000 + 125000 * Math.random(),
 			(parameters.oceanSide / 25) * y)
 		);	
 	} 
@@ -204,7 +204,6 @@ function setWater() {
 			waterColor: 0x001e0f,
 			distortionScale: parameters.distortionScale,
 			fog: scene.fog != undefined,
-			side: THREE.DoubleSide,
 			size: parameters.size
 		}
 	);

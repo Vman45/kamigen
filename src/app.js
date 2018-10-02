@@ -1,23 +1,30 @@
-$(document)
-  .ready(function() {
+// External libs
+import $ from 'jQuery';
+import THREE from 'THREE';
+// Models
+import MainCanvasModel from './app/models/MainCanvasModel.js';
+import ThreeCanvasModel from './app/models/ThreeCanvasModel.js';
+// Views
+import MainCanvasView from './app/views/MainCanvasView.js';
 
-    // fix menu when passed
-    $('.masthead')
-      .visibility({
-        once: false,
-        onBottomPassed: function() {
-          $('.fixed.menu').transition('fade in');
-        },
-        onBottomPassedReverse: function() {
-          $('.fixed.menu').transition('fade out');
-        }
-      })
-    ;
+/**
+ * Manifold Browser Application
+ */
+export default class App {
+  constructor() {
+    this.models = {
+      mainCanvas: new MainCanvasModel(),
+      threeCanvas: []
+    };
+    this.views = {
+      mainCanvas: new MainCanvasView({ model: this.models.mainCanvas }),
+      threeCanvas: []
+    };
+  }
+}
 
-    // create sidebar and attach to menu open
-    $('.ui.sidebar')
-      .sidebar('attach events', '.toc.item')
-    ;
-
-  })
-;
+// Startup using jQuery.ready()
+$(() => {
+  var app = new App();
+  window.app = app;
+});

@@ -1,6 +1,6 @@
 # KAMIGEN
 ![Logo](/art/Kamigen%20Logo-01.png)
-A fast paced airship combat game in a tropical island setting.
+A tropical cyberpunk game with airships.
 
 [Preview Demo](http://kamigen.paulbrzeski.com)
 ![Island Screenshot](/art/Kamigen%20Island%20shot.PNG)
