@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title
+      block title
+    link(href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css', rel='stylesheet')
+    link(href='./dist/styles.css', rel='stylesheet')
+  body
+    include /src/templates/header.pug
+    block page
+  include /src/templates/scripts.pug

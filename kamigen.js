@@ -72,7 +72,7 @@ function initSky() {
 }
 
 function addCloud(position) {
-	var spriteMap = new THREE.TextureLoader().load( "./vendor/cloud.png" );
+	var spriteMap = new THREE.TextureLoader().load( "./assets/cloud.png" );
 	var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff, alphaTest: 0.1 } );
 	var sprite = new THREE.Sprite( spriteMaterial );
 	sprite.position.set(position.x, position.y, position.z);
@@ -195,7 +195,7 @@ function setWater() {
 			clipBias: -0.000001,
 			textureWidth: 1024,
 			textureHeight: 1024,
-			waterNormals: new THREE.TextureLoader().load( './vendor/waternormals.jpg', function ( texture ) {
+			waterNormals: new THREE.TextureLoader().load( './assets/waternormals.jpg', function ( texture ) {
 				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			}),
 			alpha: 	parameters.alpha,
@@ -218,7 +218,7 @@ function setWater() {
 
 function getFuselage() {
 	var geometry = new THREE.OctahedronGeometry( 30, 2);
-	var texture = new THREE.TextureLoader().load( './vendor/camo.png', function ( texture ) {
+	var texture = new THREE.TextureLoader().load( './assets/camo.png', function ( texture ) {
 		texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping;
 		texture.repeat.set( 1., 2.5 );
 	});
@@ -272,7 +272,7 @@ function getWing(side) {
 	}
 	var shape = new THREE.Shape( pts );
 	var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-	var texture = new THREE.TextureLoader().load( './vendor/camo.png', function ( texture ) {
+	var texture = new THREE.TextureLoader().load( './assets/camo.png', function ( texture ) {
 		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 		texture.repeat.set( .005, .005 );
 	});
@@ -358,7 +358,7 @@ function render() {
 }
 
 var fire_material = new THREE.SpriteMaterial( {
-	map: new THREE.TextureLoader().load( './vendor/smoke.png'),
+	map: new THREE.TextureLoader().load( './assets/smoke.png'),
 	blending: THREE.AdditiveBlending,
 	alphaTest: 0.1
 } );
