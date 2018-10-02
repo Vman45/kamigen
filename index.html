@@ -154,6 +154,29 @@
       }
     }  
   </script>
+  <script id="spriteVertexShader" type="x-shader/x-vertex">
+    varying vec2 vUV;
+    void main()
+    {
+      vUV = uv;
+      gl_Position = projectionMatrix *
+                modelViewMatrix *
+                vec4(position,1.0);
+    }
+  </script>
+  <script id="spriteFragmentShader" type="x-shader/x-vertex">
+    varying vec2 vUV;
+    void main()
+    {
+      vec2 uv = vUV;
+      uv -= 0.5;
+      uv.x *= 0.8;
+      float d = length(uv);
+      float c = smoothstep(0.4, 0.4-0.6, d);
+      c *= 0.5;
+      gl_FragColor = vec4(c);
+    }  
+  </script>
   <script src="./vendor/jquery.min.js"></script>
   <script src="./vendor/Tween.js"></script>
   <script src="./vendor/three.js"></script>

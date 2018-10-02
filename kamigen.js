@@ -77,7 +77,7 @@ function addCloud(position) {
 	var sprite = new THREE.Sprite( spriteMaterial );
 	sprite.position.set(position.x, position.y, position.z);
 	var randomer = Math.random();
-	sprite.scale.set(1000 * randomer,1000 * randomer,1);
+	sprite.scale.set(10000 * randomer,10000 * randomer,1);
 	scene.add( sprite );
 }
 
@@ -120,11 +120,11 @@ function initLand() {
 	land.position.y = -900;
 	land.rotation.x = - Math.PI / 2;
 	scene.add( land );
-	land.geometry.computeBoundingBox();
-	console.log(land);
-	var box = new THREE.BoxHelper( land, 0xffff00 );
-	box.update();
-	scene.add( box );
+	// land.geometry.computeBoundingBox();
+	// console.log(land);
+	// var box = new THREE.BoxHelper( land, 0xffff00 );
+	// box.update();
+	// scene.add( box );
 }
 function init() {
 	keyboard	= new THREEx.KeyboardState();
@@ -361,7 +361,8 @@ function render() {
 
 var fire_material = new THREE.SpriteMaterial( {
 	map: new THREE.TextureLoader().load( './vendor/smoke.png'),
-	blending: THREE.AdditiveBlending
+	blending: THREE.AdditiveBlending,
+	alphaTest: 0.1
 } );
 function initParticles() {
 
