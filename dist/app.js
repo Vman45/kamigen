@@ -1,10 +1,10 @@
+'use strict';
+
 // Startup using jQuery.ready()
-$(() => {
+$(function () {
   init();
   animate();
 });
-
-var NEAR = 1e-6, FAR = 1e27;
 var water, light;
 var parameters = {
   oceanSide: 150000,
@@ -12,13 +12,10 @@ var parameters = {
   distortionScale: 8,
   alpha: 1
 };
-var waterNormals;
 var container, stats;
 var keyboard, ship;
 var camera, camera_controls, scene, renderer;
-var water, texture, water_geometry, material, particle;
-var worldWidth = 256, worldDepth = 256,
-worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
+var water;
 var clock = new THREE.Clock();
 var land, sky;
 var sunSphere;
@@ -101,6 +98,7 @@ function initLand() {
 
   var landSize = 200000;
   
+  
   var customMaterial = new THREE.ShaderMaterial( 
   {
     uniforms: {
@@ -123,6 +121,11 @@ function initLand() {
   land.position.y = -900;
   land.rotation.x = - Math.PI / 2;
   scene.add( land );
+  // land.geometry.computeBoundingBox();
+  // console.log(land);
+  // var box = new THREE.BoxHelper( land, 0xffff00 );
+  // box.update();
+  // scene.add( box );
 }
 function init() {
   keyboard  = new THREEx.KeyboardState();
@@ -384,7 +387,7 @@ function initParticle( particle, scale ) {
   particle.scale.x = particle.scale.y = scale;
   particle.translateY(-120);
   new TWEEN.Tween( particle.scale )
-    .onComplete(function(){ scene.remove(particle) })
+    .onComplete(function(){ scene.remove(particle); })
     .to( { x: 0.01, y: 0.01 }, 1000 )
     .start();
   scene.add( particle );
