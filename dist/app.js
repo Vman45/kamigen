@@ -64,8 +64,8 @@ function initSky() {
   };
 
    var sun_cycle = new TWEEN.Tween(effectController)
-    .to({azimuth: 1.1}, 60000)
-    .to({inclination: 1.1}, 60000)
+    .to({azimuth: 1.1}, 600000)
+    .to({inclination: 1.1}, 600000)
     .repeat(Infinity)
     .yoyo(true)
     .start();
@@ -98,16 +98,16 @@ function initLand() {
 
   var landSize = 200000;
   
-  
   var customMaterial = new THREE.ShaderMaterial( 
   {
     uniforms: {
       bumpTexture:  { type: "t", value: displacementMap },
       bumpScale:    { type: "f", value: 24361.43 },
       landSize:     { type: "f", value: landSize },
+      time:         { type: "f", value: 0.0 },
       texture:      { type: "t", value: map },
       sandyTexture: { type: "t", value: sandMap },
-      grassTexture: { type: "t", value: forestMap },
+      forestTexture: { type: "t", value: forestMap },
       rockyTexture: { type: "t", value: volcanoMap },
       sunPosition:  { type: "v3", value: light.position.clone() },
       center:       { type: "v3", value: { x: 0, y: 0, z: 0} }
@@ -121,11 +121,6 @@ function initLand() {
   land.position.y = -900;
   land.rotation.x = - Math.PI / 2;
   scene.add( land );
-  // land.geometry.computeBoundingBox();
-  // console.log(land);
-  // var box = new THREE.BoxHelper( land, 0xffff00 );
-  // box.update();
-  // scene.add( box );
 }
 function init() {
   keyboard  = new THREEx.KeyboardState();
@@ -328,6 +323,7 @@ function render() {
     time = clock.getElapsedTime() * 10;
   
   water.material.uniforms.time.value += 1.0 / 60.0;
+  land.material.uniforms.time.value += 1.0 / 60.0;
   
   if (effectController) {
     var distance = parameters.oceanSide;

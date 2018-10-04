@@ -4,6 +4,8 @@ uniform float bumpScale;
 varying float vAmount;
 varying vec2 vUV;
 varying vec4 worldPosition;
+varying vec3 vViewPosition;
+varying vec3 vNormal;
 
 void main() 
 { 
@@ -16,6 +18,12 @@ void main()
   vec3 newPosition = position + normal * bumpScale * vAmount;
 
   worldPosition = modelMatrix * vec4( position, 1.0 );
+
+  // Normal position.
+  vNormal = normalize( normalMatrix * normal );
+
+  // View vector.
+  vViewPosition = cameraPosition - worldPosition.xyz;
   
   gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
 }
