@@ -1,0 +1,230 @@
+<html>
+  <head>
+    <script src='https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/12835_17_JCLive_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/12840_1_JCLive_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/12842_1_JCLive_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/12841_1_JCLive_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/0940_Chaos_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/0890_Chaos_sf2_file.js'></script>
+    <script src='https://surikov.github.io/webaudiofontdata/sound/0270_FluidR3_GM_sf2_file.js'></script>
+    <script>
+      /*
+
+        Instruments,
+
+            _drum_41_1_JCLive_sf2_file - Bass Drum
+            _drum_35_17_JCLive_sf2_file - Kick
+            _drum_40_1_JCLive_sf2_file - Snare
+            _drum_42_1_JCLive_sf2_file - HiHat
+
+      */
+
+      var AudioContextFunc = window.AudioContext || window.webkitAudioContext;
+      var audioContext = new AudioContextFunc();
+      var player=new WebAudioFontPlayer();
+      player.loader.decodeAfterLoading(audioContext, '_drum_41_1_JCLive_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_drum_35_17_JCLive_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_drum_40_1_JCLive_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_drum_42_1_JCLive_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_tone_0940_Chaos_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_tone_0890_Chaos_sf2_file');
+      player.loader.decodeAfterLoading(audioContext, '_tone_0270_FluidR3_GM_sf2_file');
+      
+
+      var instruments = {
+        kick: _drum_35_17_JCLive_sf2_file,
+        hat: _drum_42_1_JCLive_sf2_file,
+        drum: _drum_41_1_JCLive_sf2_file,
+        snare: _drum_40_1_JCLive_sf2_file,
+        halo: _tone_0940_Chaos_sf2_file,
+        warm: _tone_0890_Chaos_sf2_file,
+        guitar: _tone_0270_FluidR3_GM_sf2_file
+      };
+
+      function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+          if ((new Date().getTime() - start) > milliseconds){
+            break;
+          }
+        }
+      }
+      function intro(){
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime, 35, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.6, 42, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.8, 41, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.2, 40, 2);
+        
+        return false;
+      }
+      function loop1(){
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime, 35, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.6, 42, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.8, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.8, 35, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1.4, 42, 2);
+        return false;
+      }
+      function loop2(){
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.2, 42, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.4, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.6, 42, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.8, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.8, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.8, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1, 42, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1.2, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1.4, 42, 2);
+        return false;
+      }
+      function loop3(){
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.2, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.2, 42, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.4, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.4, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.6, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.6, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.6, 42, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.8, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.8, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.8, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1, 42, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1.2, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 1.2, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1.4, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1.4, 42, 2);
+        return false;
+      }
+      function loop4(){
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.1, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.2, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.2, 42, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.3, 40, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.4, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.4, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.5, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.6, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.6, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 0.6, 42, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.7, 40, 2);
+        
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 0.8, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.8, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 0.8, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 0.9, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1, 42, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.1, 40, 2);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1.2, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.2, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.drum, audioContext.currentTime + 1.2, 41, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.3, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.kick, audioContext.currentTime + 1.4, 35, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.4, 40, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.hat, audioContext.currentTime + 1.4, 42, 2);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.snare, audioContext.currentTime + 1.5, 40, 2);
+        return false;
+      }
+      function song() {
+        // Synths
+        var vol = 0.3;
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 1.6, 64, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 4.8, 66, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 6.4, 68, 6.4, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 12.8, 66, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 16.0, 64, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.halo, audioContext.currentTime + 19.2, 62, 3.2, vol);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 1.6, 64, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 4.8, 66, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 6.4, 68, 6.4, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 12.8, 66, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 16.0, 64, 3.2, vol);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.warm, audioContext.currentTime + 19.2, 62, 3.2, vol);
+
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 1.6, 64, 3.2, 0.6);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 4.8, 66, 3.2, 0.6);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 6.4, 68, 6.4, 0.6);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 12.8, 66, 3.2, 0.6);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 16.0, 64, 3.2, 0.6);
+        player.queueWaveTable(audioContext, audioContext.destination, instruments.guitar, audioContext.currentTime + 19.2, 62, 3.2, 0.6);
+
+        intro();
+        sleep(1600);
+        loop1();
+        sleep(1600);
+        loop1();
+        sleep(1600);
+
+        loop2();
+        sleep(1600);
+        loop2();
+        
+        sleep(1600);
+        loop3();
+        sleep(1600);
+        loop3();
+
+        sleep(1600);
+        loop4();
+        sleep(1600);
+        loop4();
+
+        sleep(1600);
+        loop3();
+        sleep(1600);
+        loop2();
+        sleep(1600);
+        loop1();
+        sleep(1600);
+        song();
+      }
+    </script>
+  </head>
+  <body>
+    <p><a href="javascript:intro();">Intro</a></p>
+    <p><a href="javascript:loop1();">Loop 1</a></p>
+    <p><a href="javascript:loop2();">Loop 2</a></p>
+    <p><a href="javascript:loop3();">Loop 3</a></p>
+    <p><a href="javascript:loop4();">Loop 4</a></p>
+    <p><a href="javascript:song();">Song</a></p>
+  </body>
+</html> 
+
