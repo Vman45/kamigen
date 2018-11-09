@@ -214,7 +214,9 @@
         sleep(1600);
         loop1();
         sleep(1600);
-        song();
+        if (document.getElementById('loop').checked != false) {
+            song();    
+        }
       }
     </script>
   </head>
@@ -225,6 +227,7 @@
     <p><a href="javascript:loop3();">Loop 3</a></p>
     <p><a href="javascript:loop4();">Loop 4</a></p>
     <p><a href="javascript:song();">Song</a></p>
+    <input type="checkbox" id="loop">Loop song (close tab to exit)<br>
   </body>
 </html> 
 
