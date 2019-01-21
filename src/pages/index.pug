@@ -12,20 +12,32 @@ block append page
     p Welcome to the Kamigen demo. 
       a(href="https://github.com/paulbrzeski/kamigen") More info
     h2 Controls
-    .ui.button W 
-    | Forward
-    .ui.button S
-    | Back
-    .ui.button A
-    | Left
-    .ui.button D
-    | Right
-    .ui.button Shift
-    | Down
-    .ui.button Space
-    | Up
-    .ui.button Mouse
-    | Move Camera
+    p
+      .ui.button
+        i.icon.arrow.up
+        | W 
+      .ui.button
+        i.icon.arrow.down
+        | S 
+    p
+      .ui.button
+        i.icon.arrow.left
+        | A 
+      .ui.button
+        i.icon.arrow.right
+        | D
+    p
+      .ui.button
+        i.icon.cloud.download
+        | Shift
+      .ui.button
+        i.icon.cloud.upload
+        | Space
+    p
+      .ui.button 
+        i.icon.expand.arrows.alternate
+        i.icon.mouse.pointer
+        | Move Camera
   #container
   #stats
   #waterTexture
