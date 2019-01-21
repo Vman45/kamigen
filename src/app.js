@@ -129,7 +129,7 @@ function init() {
   keyboard  = new THREEx.KeyboardState();
   container = document.getElementById( 'container' );
   renderer = new THREE.WebGLRenderer({
-    antialias: false,
+    antialias: true,
     logarithmicDepthBuffer: false
   });
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -176,7 +176,7 @@ function drawShip() {
   var cockpit = getCockpit();
   var fuselage = getFuselage();
   
-  ship = new THREE.Object3D();
+  ship = new THREE.Object3D();index
   ship.add(wingPort);
   ship.add(wingStarboard);
   ship.add(fuselage);
@@ -215,15 +215,15 @@ function setWater() {
 }
 
 function getFuselage() {
-  var geometry = new THREE.OctahedronGeometry( 30, 2);
-  var texture = new THREE.TextureLoader().load( './assets/camo.png', function ( texture ) {
+  var geometry = new THREE.OctahedronGeometry( 30, 0);
+  var texture = new THREE.TextureLoader().load( './assets/darkmetal.jpg', function ( texture ) {
     texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping;
-    texture.repeat.set( 1., 2.5 );
+    texture.repeat.set( 10., 25. );
   });
-  var material = new THREE.MeshLambertMaterial( { map: texture } );
+  var material = new THREE.MeshPhongMaterial( { map: texture } );
   var fuselage = new THREE.Mesh( geometry, material );
 
-  fuselage.scale.set(1,5,1);
+  fuselage.scale.set(.75,5,1.85);
   fuselage.position.set(0, -120, 0);
   fuselage.rotation.set(-Math.PI / 2, Math.PI / 2, 0);
 
@@ -232,12 +232,12 @@ function getFuselage() {
 
 function getCockpit() {
   var geometry = new THREE.OctahedronGeometry( 30, 1);
-  var material = new THREE.MeshToonMaterial( { color: 0x003366, shininess: 100 } );
+  var material = new THREE.MeshToonMaterial( { color: 0x006633, shininess: 100 } );
   var fuselage = new THREE.Mesh( geometry, material );
 
-  fuselage.scale.set(.8,.35,.45);
-  fuselage.position.set(0, -110, 115);
-  fuselage.rotation.set(0, -Math.PI / 2, 0);
+  fuselage.scale.set(.8,.15,.35);
+  fuselage.position.set(0, -110, 70);
+  fuselage.rotation.set(0.1, -Math.PI / 2, 0);
 
   return fuselage;
 }
@@ -245,14 +245,14 @@ function getCockpit() {
 function getWing(side) {
   if (side == 'port') {
     var closedSpline = new THREE.CatmullRomCurve3( [    
-      new THREE.Vector3(  -120,  20, 120 ),
-      new THREE.Vector3(  -120,  20, -120 )
+      new THREE.Vector3(  -120,  90, 120 ),
+      new THREE.Vector3(  -120,  90, -120 )
     ] );
   }
   if (side == 'starboard') {
     var closedSpline = new THREE.CatmullRomCurve3( [    
-      new THREE.Vector3(  -120,  20, -120 ),
-      new THREE.Vector3(  -120,  20, 120 )
+      new THREE.Vector3(  -120,  90, -120 ),
+      new THREE.Vector3(  -120,  90, 120 )
     ] );  
   }
   closedSpline.type = 'catmullrom';
@@ -264,26 +264,26 @@ function getWing(side) {
   };
   var pts = [], count = 3;
   for ( var i = 0; i < count; i ++ ) {
-    var l = 30;
+    var l = 80;
     var a = 20 * i / count * Math.PI;
     pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * 4 ) );
   }
   var shape = new THREE.Shape( pts );
   var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-  var texture = new THREE.TextureLoader().load( './assets/camo.png', function ( texture ) {
+  var texture = new THREE.TextureLoader().load( './assets/darkmetal.jpg', function ( texture ) {
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( .005, .005 );
+    texture.repeat.set( .05, .05 );
   });
-  var material = new THREE.MeshLambertMaterial( { map: texture, wireframe: false } );
+  var material = new THREE.MeshPhongMaterial( { map: texture, wireframe: false } );
   var wing = new THREE.Mesh( geometry, material );
   
 
   if (side == 'port') {
-    wing.position.set(-120,-240,-10);
+    wing.position.set(-100,-240, 90);
     wing.rotation.set(0, Math.PI / 3 , -Math.PI / 2);
   }
   if (side == 'starboard') {
-    wing.position.set(120,-240,-10);
+    wing.position.set(100,-240, 90);
     wing.rotation.set(0, ((2 * Math.PI) / 3) , -Math.PI / 2);
   }
   
@@ -368,16 +368,16 @@ function initParticles() {
   var right_thruster = new THREE.Sprite( fire_material );
   right_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
   right_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
-  right_thruster.translateX(-150);
-  right_thruster.translateZ(-80);
+  right_thruster.translateX(-90);
+  right_thruster.translateZ(-50);
   right_thruster.material.rotation = thrust;
   initParticle(right_thruster, scale);
 
   var left_thruster = new THREE.Sprite( fire_material );
   left_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
   left_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
-  left_thruster.translateX(150);
-  left_thruster.translateZ(-80);
+  left_thruster.translateX(90);
+  left_thruster.translateZ(-50);
   left_thruster.material.rotation = -thrust;
   initParticle(left_thruster, scale);
 }
