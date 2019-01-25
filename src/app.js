@@ -150,7 +150,6 @@ function init() {
   
   camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
   
-  
   setWater();
 
   ship = drawShip();
@@ -297,6 +296,7 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+var resettingCamera = false;
 function animate() {
   TWEEN.update();
   if (keyboard.pressed(" ")) {
@@ -315,20 +315,19 @@ function animate() {
 
   ship.translateZ(ship.velocity);
   if (keyboard.pressed("a")) {
-    camera.rotateZ(Math.PI / 180);
     ship.rotateZ(-Math.PI / 360);
   }
   if (keyboard.pressed("d")) {
-    camera.rotateZ(-Math.PI / 180);
     ship.rotateZ(Math.PI / 360);
   }
   if (keyboard.pressed("s")) {
-    camera.rotateX(Math.PI / 180);
     ship.rotateX(-Math.PI / 360);
   }
   if (keyboard.pressed("w")) {
-    camera.rotateX(-Math.PI / 180);
     ship.rotateX(Math.PI / 360);
+  }
+  if (keyboard.pressed("c")) {
+    camera_controls.reset();
   }
 
   if (ship.velocity != 0) {

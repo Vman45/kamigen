@@ -12,6 +12,7 @@ block append page
     p Welcome to the Kamigen demo. 
       a(href="https://github.com/paulbrzeski/kamigen") More info
     h2 Controls
+    h3 Tilt the aircraft with these keys
     p
       .ui.button
         i.icon.arrow.up
@@ -26,6 +27,7 @@ block append page
       .ui.button
         i.icon.arrow.right
         | D
+    h3 Accelerate and decelerate
     p
       .ui.button
         i.icon.fast.backward
@@ -33,11 +35,14 @@ block append page
       .ui.button
         i.icon.fast.forward
         | Space
+    h3 Camera controls
     p
       .ui.button 
         i.icon.expand.arrows.alternate
         i.icon.mouse.pointer
-        | Move Camera
+        | Mouse <> Camera
+      .ui.button 
+        | C - Reset camera
   #container
   #stats
   #waterTexture
