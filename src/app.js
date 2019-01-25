@@ -149,7 +149,7 @@ function init() {
   scene.add( light );
   
   camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
-  camera_controls.target.set(0,0,0);
+  
   
   setWater();
 
@@ -182,6 +182,7 @@ function drawShip() {
   ship.add(fuselage);
   ship.add(cockpit);
   ship.position.set(0, 25000, 0);
+  ship.velocity = 10.0;
   
   return ship;
 }
@@ -298,25 +299,42 @@ function onWindowResize() {
 
 function animate() {
   TWEEN.update();
-  if (keyboard.pressed("w")) {
-    initParticles();    
-    ship.translateZ(20);
-  }
-  if (keyboard.pressed("s")) {
-    ship.translateZ(-20);
-  }
-  if (keyboard.pressed("a")) {
-    ship.rotateY(Math.PI / 180);
-  }
-  if (keyboard.pressed("d")) {
-    ship.rotateY(-Math.PI / 180);
-  }
   if (keyboard.pressed(" ")) {
-    ship.translateY(20);
+    if (ship.velocity < 50) {
+      ship.velocity += 0.1;
+    }
   }
   if (keyboard.pressed("shift")) {
-    ship.translateY(-20);
+    if (ship.velocity > 0) {
+      ship.velocity -= 0.1;  
+    }
+    else {
+      ship.velocity = 0;
+    }
   }
+
+  ship.translateZ(ship.velocity);
+  if (keyboard.pressed("a")) {
+    camera.rotateZ(Math.PI / 180);
+    ship.rotateZ(-Math.PI / 360);
+  }
+  if (keyboard.pressed("d")) {
+    camera.rotateZ(-Math.PI / 180);
+    ship.rotateZ(Math.PI / 360);
+  }
+  if (keyboard.pressed("s")) {
+    camera.rotateX(Math.PI / 180);
+    ship.rotateX(-Math.PI / 360);
+  }
+  if (keyboard.pressed("w")) {
+    camera.rotateX(-Math.PI / 180);
+    ship.rotateX(Math.PI / 360);
+  }
+
+  if (ship.velocity != 0) {
+    initParticles();
+    ship.velocity *= 0.9999;
+  };
   
   requestAnimationFrame( animate );
   render();
@@ -369,7 +387,7 @@ function initParticles() {
   right_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
   right_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
   right_thruster.translateX(-90);
-  right_thruster.translateZ(-50);
+  right_thruster.translateZ(-70);
   right_thruster.material.rotation = thrust;
   initParticle(right_thruster, scale);
 
@@ -377,7 +395,7 @@ function initParticles() {
   left_thruster.position.set( ship.position.x, ship.position.y, ship.position.z );
   left_thruster.rotation.set( ship.rotation.x, ship.rotation.y, ship.rotation.z );
   left_thruster.translateX(90);
-  left_thruster.translateZ(-50);
+  left_thruster.translateZ(-70);
   left_thruster.material.rotation = -thrust;
   initParticle(left_thruster, scale);
 }
