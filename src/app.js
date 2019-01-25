@@ -77,7 +77,7 @@ function initSky() {
 
 function addCloud(position) {
   var spriteMap = new THREE.TextureLoader().load( "./assets/cloud.png" );
-  var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff, alphaTest: 0.1 } );
+  var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.1, map: spriteMap, color: 0xffffff } );
   var sprite = new THREE.Sprite( spriteMaterial );
   sprite.position.set(position.x, position.y, position.z);
   var randomer = Math.random();
@@ -161,10 +161,22 @@ function init() {
   initSky();
   initLand();
 
+  drawTorus(-25000, 25000, 0);
+  drawTorus(-45000, 35000, 0);
+
   stats = new Stats();
   document.getElementById( 'stats' ).appendChild( stats.domElement );
 
   window.addEventListener( 'resize', onWindowResize, false );
+}
+
+function drawTorus(x, y, z) {
+  var geometry = new THREE.TorusGeometry( 1000, 100, 8, 50 );
+  var material = new THREE.MeshBasicMaterial( { color: 0xffff00, wireframe: true } );
+  var torus = new THREE.Mesh( geometry, material );
+  torus.rotation.set(0,-Math.PI/2, 0);
+  torus.position.set(x, y, z);
+  scene.add( torus );
 }
 
 function drawShip() {
@@ -181,7 +193,7 @@ function drawShip() {
   ship.add(fuselage);
   ship.add(cockpit);
   ship.position.set(0, 25000, 0);
-  ship.velocity = 10.0;
+  ship.velocity = 15.0;
   
   return ship;
 }
@@ -299,6 +311,9 @@ function onWindowResize() {
 var resettingCamera = false;
 function animate() {
   TWEEN.update();
+  if (ship.velocity < 10) {
+    ship.position.y -= 25 - (ship.velocity * 2.5);
+  }
   if (keyboard.pressed(" ")) {
     if (ship.velocity < 50) {
       ship.velocity += 0.1;
@@ -334,7 +349,7 @@ function animate() {
     initParticles();
     ship.velocity *= 0.9999;
   };
-  
+ 
   requestAnimationFrame( animate );
   render();
 }
@@ -374,9 +389,9 @@ function render() {
 }
 
 var fire_material = new THREE.SpriteMaterial( {
+  alphaTest: .0543212345,
   map: new THREE.TextureLoader().load( './assets/smoke.png'),
-  blending: THREE.AdditiveBlending,
-  alphaTest: 0.1
+  transparent: true
 } );
 function initParticles() {
 
