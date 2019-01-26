@@ -306,7 +306,12 @@ function onWindowResize() {
 function animate() {
   TWEEN.update();
   if (ship.velocity < 10) {
+    // Falling gravity
     ship.position.y -= 25 - (ship.velocity * 2.5);
+  }
+  else {
+    // Regular gravity
+    ship.position.y -= .98;
   }
   if (keyboard.pressed(" ")) {
     if (ship.velocity < 50) {
@@ -329,10 +334,10 @@ function animate() {
   if (keyboard.pressed("d")) {
     ship.rotateZ(Math.PI / 360);
   }
-  if (keyboard.pressed("s")) {
+  if (keyboard.pressed("w")) {
     ship.rotateX(-Math.PI / 360);
   }
-  if (keyboard.pressed("w")) {
+  if (keyboard.pressed("s")) {
     ship.rotateX(Math.PI / 360);
   }
   if (keyboard.pressed("c")) {
