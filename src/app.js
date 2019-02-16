@@ -1,5 +1,17 @@
-// Startup using jQuery.ready()
+/**
+ * Kamigen Browser Application
+ */
+export default class App {
+  constructor() {
+    // this.stuff =
+  }
+}
+
+// Startup using jQuery.ready().
 $(() => {
+  var app = new App();
+  window.app = app;
+
   init();
   animate();
 });

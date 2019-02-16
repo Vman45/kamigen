@@ -1,7 +1,17 @@
 'use strict';
 
-// Startup using jQuery.ready()
+/**
+ * Kamigen Browser Application
+ */
+var App = function App() {
+  // this.stuff =
+};
+
+// Startup using jQuery.ready().
 $(function () {
+  var app = new App();
+  window.app = app;
+
   init();
   animate();
 });
@@ -421,3 +431,5 @@ function initParticle( particle, scale ) {
     .start();
   scene.add( particle );
 }
+
+module.exports = App;
