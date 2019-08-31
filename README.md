@@ -1,8 +1,8 @@
 # KAMIGEN
 A tropical cyberpunk game with airships.
 
-[Play the Alpha Build](https://kamigen.com)
-[Audio Loop Demo](https://kamigen.com/music/flying.html)
+- [Play the Alpha Build](https://kamigen.com)
+- [Audio Loop Demo](https://kamigen.com/music/flying.html)
 ![Island Screenshot](/art/Wallpaper.PNG)
 ![Ocean Screenshot](/art/Screenshot%202018-09-22.PNG)
 ![Night Screenshot](/art/Screenshot%202019-01-26.PNG)
