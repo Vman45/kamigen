@@ -1,10 +1,10 @@
 # KAMIGEN
-![Logo](/art/Kamigen%20Logo-01.png)
 A tropical cyberpunk game with airships.
 
-[Preview Demo](https://kamigen.com)
+[Play the Alpha Build](https://kamigen.com)
+[Audio Loop Demo](https://kamigen.com/music/flying.html)
 ![Island Screenshot](/art/Wallpaper.PNG)
-![Ocean Screenshot](/art/Screenshot%202019-09-22.PNG)
+![Ocean Screenshot](/art/Screenshot%202018-09-22.PNG)
 ![Night Screenshot](/art/Screenshot%202019-01-26.PNG)
 ![Ship Screenshot](/art/Screenshot%202019-01-26-1.PNG)
 
@@ -14,3 +14,4 @@ A tropical cyberpunk game with airships.
 Credits:
 - Camo texture, https://www.deviantart.com/sargy001/art/Tropical-Camo-347462946
 - Heightmap texturing, https://stemkoski.github.io/Three.js/Shader-Heightmap-Textures.html
+- Music using Surikov's Web Audio Font, https://github.com/surikov/webaudiofont
