@@ -1,6 +1,6 @@
 # KAMIGEN
 A tropical cyberpunk game with airships.
-![Logo Concept](/art/Kamigen%20Logo-01.PNG)
+![Logo Concept](/art/Kamigen%20Logo-01.png)
 - [Play the Alpha Build](https://kamigen.com)
 - [Audio Loop Demo](https://kamigen.com/music/flying.html)
 ![Island Screenshot](/art/Wallpaper.PNG)
