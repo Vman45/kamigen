@@ -218,6 +218,8 @@
 
       function loop() {
         switch(activeLoop) {
+            case(0):
+                break;
             case(1):
                 intro();
                 break;
@@ -243,7 +245,7 @@
   <body>
     <!-- Generator: Adobe Illustrator 23.0.6, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-         viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+         viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve" onmouseout="activeLoop = 0">
     <style type="text/css">
         .st0{fill:none;}
         .st1{fill:none;stroke:#231F20;stroke-width:0.3;stroke-linecap:square;}
@@ -515,6 +517,11 @@
         </g>
     </g>
     <text transform="matrix(1 0 0 1 53.2183 214.9756)" class="st13 st14">Background Music Transition Test</text>
+    <polygon onmouseenter="activeLoop = 1" class="radius_safe" points="1700.6,-298 726,-298 238.7,546 726,1390 1700.6,1390 2187.8,546 "/>
+    <polygon onmouseenter="activeLoop = 2" class="radius_neutral" points="1596.1,-117.2 830.4,-117.2 447.5,546 830.4,1209.2 1596.1,1209.2 1979,546 "/>
+    <polygon onmouseenter="activeLoop = 3" class="radius_caution" points="1492.7,62 933.8,62 654.4,546 933.8,1030 1492.7,1030 1772.1,546 "/>
+    <polygon onmouseenter="activeLoop = 4" class="radius_danger" points="1404.6,214.5 1021.9,214.5 830.5,546 1021.9,877.5 1404.6,877.5 1596,546 "/>
+    <polygon onmouseenter="activeLoop = 5" class="radius_alert" points="1299.9,396 1126.7,396 1040.1,546 1126.7,696 1299.9,696 1386.5,546 "/>
     <g class="arrow">
         <g>
             <line class="st17" x1="1177.6" y1="546.5" x2="55.5" y2="546.5"/>
@@ -522,13 +529,7 @@
                 <polygon points="1170.3,521.6 1213.5,546.5 1170.3,571.4             "/>
             </g>
         </g>
-    </g>
-    <polygon onmouseenter="activeLoop = 1" class="radius_safe" points="1700.6,-298 726,-298 238.7,546 726,1390 1700.6,1390 2187.8,546 "/>
-    <polygon onmouseenter="activeLoop = 2" class="radius_neutral" points="1596.1,-117.2 830.4,-117.2 447.5,546 830.4,1209.2 1596.1,1209.2 1979,546 "/>
-    <polygon onmouseenter="activeLoop = 3" class="radius_caution" points="1492.7,62 933.8,62 654.4,546 933.8,1030 1492.7,1030 1772.1,546 "/>
-    <polygon onmouseenter="activeLoop = 4" class="radius_danger" points="1404.6,214.5 1021.9,214.5 830.5,546 1021.9,877.5 1404.6,877.5 1596,546 "/>
-    <polygon onmouseenter="activeLoop = 5" class="radius_alert" points="1299.9,396 1126.7,396 1040.1,546 1126.7,696 1299.9,696 1386.5,546 "/>
-    
+    </g>    
     </svg>
     <p><a href="javascript:intro();">Intro</a></p>
     <p><a href="javascript:loop1();">Loop 1</a></p>
