@@ -3,9 +3,12 @@ extends /src/templates/website.pug
 block append title
   | Home | Kamigen | A Tropical Cyberpunk RPG
 
+block append scripts
+  script(src='./dist/jumbotron.js')
+
 block append content
   .row
-    .column
+    .column#jumbotron
       img.ui.image.fluid(src='./art/resources/screenshots/Kamigen Island shot.PNG')
   .row#container
     .column.ten.wide
