@@ -1,48 +1,16 @@
-extends /src/templates/layout.pug
-
-block append scripts
-  script(src='./dist/app.js')
+extends /src/templates/website.pug
 
 block append title
-  | Gameplay Concept | Kamigen
+  | Kamigen | A Tropical Cyberpunk RPG
 
-block append page
-  #info
-    h1 Kamigen
-    p Welcome to the Kamigen demo. 
-      a(href="https://github.com/paulbrzeski/kamigen") More info
-    h2 Controls
-    h3 Tilt the aircraft with these keys
-    p
-      .ui.button
-        i.icon.arrow.up
-        | W 
-      .ui.button
-        i.icon.arrow.down
-        | S 
-    p
-      .ui.button
-        i.icon.arrow.left
-        | A 
-      .ui.button
-        i.icon.arrow.right
-        | D
-    h3 Accelerate and decelerate
-    p
-      .ui.button
-        i.icon.fast.backward
-        | Shift
-      .ui.button
-        i.icon.fast.forward
-        | Space
-    h3 Camera controls
-    p
-      .ui.button 
-        i.icon.expand.arrows.alternate
-        i.icon.mouse.pointer
-        | Mouse <> Camera
-      .ui.button 
-        | C - Reset camera
-  #container
-  #stats
-  #waterTexture
+block append content
+  .row
+    .column
+      img.ui.image.fluid(src='./art/resources/screenshots/Kamigen Island shot.PNG')
+  .row
+    .column.ten.wide
+      h3.ui.dividing.header News
+      p Coming soon!
+    .column.six.wide
+      h3.ui.dividing.header Latest Comic
+      h3.ui.dividing.header About Kamigen

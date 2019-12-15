@@ -1,0 +1,23 @@
+extends layout.pug
+
+block append head
+  link(href='./dist/website.css', rel='stylesheet')
+
+block append page
+  .ui.grid.stackable
+    .row
+      .column
+        .ui.five.item.menu.secondary
+          .item
+            a(href='#') Comics
+          .item
+            a(href='#') Game
+          .item
+            a(href='#') Logo
+          .item
+            a(href='#') Media
+          .item Shop (coming soon)
+    block content
+
+    .row
+      .column Footer

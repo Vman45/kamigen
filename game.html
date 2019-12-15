@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Kamigen | A Tropical Cyberpunk RPG
+    <title>Gameplay Concept | Kamigen
     </title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
-    <link href="./dist/website.css" rel="stylesheet">
+    <link href="./dist/game.css" rel="stylesheet">
   </head>
   <body>
-    <div class="ui grid stackable">
-      <div class="row">
-        <div class="column">
-          <div class="ui five item menu secondary">
-            <div class="item"><a href="#">Comics</a></div>
-            <div class="item"><a href="#">Game</a></div>
-            <div class="item"><a href="#">Logo</a></div>
-            <div class="item"><a href="#">Media</a></div>
-            <div class="item">Shop (coming soon)</div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="column"><img class="ui image fluid" src="./art/resources/screenshots/Kamigen Island shot.PNG"></div>
-      </div>
-      <div class="row">
-        <div class="column ten wide">
-          <h3 class="ui dividing header">News</h3>
-          <p>Coming soon!</p>
-        </div>
-        <div class="column six wide">
-          <h3 class="ui dividing header">Latest Comic</h3>
-          <h3 class="ui dividing header">About Kamigen</h3>
-        </div>
-      </div>
-      <div class="row">
-        <div class="column">Footer</div>
-      </div>
+    <div id="info">
+      <h1>Kamigen</h1>
+      <p>Welcome to the Kamigen demo. <a href="https://github.com/paulbrzeski/kamigen">More info</a></p>
+      <h2>Controls</h2>
+      <h3>Tilt the aircraft with these keys</h3>
+      <p>
+        <div class="ui button"><i class="icon arrow up"></i>W </div>
+        <div class="ui button"><i class="icon arrow down"></i>S </div>
+      </p>
+      <p>
+        <div class="ui button"><i class="icon arrow left"></i>A </div>
+        <div class="ui button"><i class="icon arrow right"></i>D</div>
+      </p>
+      <h3>Accelerate and decelerate</h3>
+      <p>
+        <div class="ui button"><i class="icon fast backward"></i>Shift</div>
+        <div class="ui button"><i class="icon fast forward"></i>Space</div>
+      </p>
+      <h3>Camera controls</h3>
+      <p>
+        <div class="ui button"> <i class="icon expand arrows alternate"></i><i class="icon mouse pointer"></i>Mouse <> Camera</div>
+        <div class="ui button">
+           C - Reset camera</div>
+      </p>
     </div>
+    <div id="container"></div>
+    <div id="stats"></div>
+    <div id="waterTexture"></div>
     <script id="landVertexShader" type="x-shader/x-vertex">uniform sampler2D bumpTexture;
 uniform float bumpScale;
 
@@ -232,5 +231,6 @@ void main()
       gtag('js', new Date());
       gtag('config', 'UA-126811218-1');
     </script>
+    <script src="./dist/app.js"></script>
   </body>
 </html>
