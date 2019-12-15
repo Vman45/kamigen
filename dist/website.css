@@ -1,0 +1,24 @@
+html,
+html * {
+  background: none #000;
+  color: #fff;
+}
+.row.footer {
+  text-align: center;
+}
+#container {
+  padding: 0 2rem;
+}
+#main_menu {
+  padding-top: 2rem;
+}
+@media only screen and (max-width: 800px) {
+  #main_menu {
+    margin: 1rem 0;
+    padding: 5rem 0 0;
+  }
+  #main_menu .item.logo {
+    position: absolute;
+    top: 2rem;
+  }
+}

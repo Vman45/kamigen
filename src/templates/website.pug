@@ -7,17 +7,20 @@ block append page
   .ui.grid.stackable
     .row
       .column
-        .ui.five.item.menu.secondary
+        #main_menu.ui.five.item.menu.secondary
           .item
-            a(href='#') Comics
+            a(href='./comics.html') Comics
           .item
-            a(href='#') Game
+            a(href='./game.html') Game
+          .item.logo
+            a(href='./')
+              img(src='./art/design/Website%20Logo-01.png' title="Kamigen")
           .item
-            a(href='#') Logo
+            a(href='./media.html') Media
           .item
-            a(href='#') Media
-          .item Shop (coming soon)
+            p Shop (coming soon)
     block content
-
-    .row
-      .column Footer
+    .row.footer
+      .column
+        a(href='./')
+          img(src='./art/design/Website%20Footer%20Logo-01.png' title="Kamigen")
