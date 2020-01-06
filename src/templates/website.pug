@@ -1,7 +1,7 @@
 extends layout.pug
 
 block append head
-  link(href='./dist/website.css', rel='stylesheet')
+  link(href='/dist/website.css', rel='stylesheet')
 
 block append page
   .ui.grid.stackable
@@ -9,18 +9,18 @@ block append page
       .column
         #main_menu.ui.five.item.menu.secondary
           .item
-            a(href='./comics.html') Comics
+            a(href='/comics.html') Comics
           .item
-            a(href='./game.html') Game
+            a(href='/game.html') Game
           .item.logo
-            a(href='./')
-              img(src='./art/design/Website%20Logo-01.png' title="Kamigen")
+            a(href='/')
+              img(src='/art/design/Website%20Logo-01.png' title="Kamigen")
           .item
-            a(href='./media.html') Media
+            a(href='/media.html') Media
           .item
             p Shop (coming soon)
     block content
     .row.footer
       .column
-        a(href='./')
-          img(src='./art/design/Website%20Footer%20Logo-01.png' title="Kamigen")
+        a(href='/')
+          img(src='/art/design/Website%20Footer%20Logo-01.png' title="Kamigen")

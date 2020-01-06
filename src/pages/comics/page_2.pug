@@ -1,0 +1,29 @@
+extends /src/templates/website.pug
+
+block append title
+  | Page 2 | Comics | Kamigen | A Tropical Cyberpunk RPG
+
+block append content
+  .row
+    .column
+      .ui.one.column.stackable.center.aligned.page.grid
+        .column.five.wide
+          a(href='/comics/page_1.html') Previous
+        .column.six.wide
+          a(href='/comics.html') Page Gallery
+        .column.five.wide
+          a(href='/comics/page_3.html') Next
+  .row
+    .column
+      .ui.one.column.stackable.center.aligned.page.grid
+        .column.sixteen.wide
+          img.ui.image.fluid(src='../art/comics/HD/Kamigen_Page 2.png')
+  .row
+    .column
+      .ui.one.column.stackable.center.aligned.page.grid
+        .column.five.wide
+          a(href='/comics/page_1.html') Previous
+        .column.six.wide
+          a(href='/comics.html') Page Gallery
+        .column.five.wide
+          a(href='/comics/page_3.html') Next
