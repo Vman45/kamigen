@@ -5,6 +5,7 @@ html * {
 }
 .row.footer {
   text-align: center;
+  padding: 4em 0 2em !important;
 }
 #container {
   padding: 0 2rem;
