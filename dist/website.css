@@ -12,6 +12,14 @@ html * {
 #main_menu {
   padding-top: 2rem;
 }
+a {
+  color: #ccc;
+  text-decoration: underline dotted;
+}
+a:hover {
+  color: #fff;
+  text-decoration: none;
+}
 @media only screen and (max-width: 800px) {
   #jumbotron {
     padding: 0px !important;
@@ -23,5 +31,8 @@ html * {
   #main_menu .item.logo {
     position: absolute;
     top: 2rem;
+  }
+  #comics .column.four.wide {
+    max-width: 25%;
   }
 }
