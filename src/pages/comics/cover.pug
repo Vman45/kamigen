@@ -1,28 +1,9 @@
-extends /src/templates/website.pug
+extends /src/templates/comic_reader.pug
 
-block append title
-  | Cover | Comics | Kamigen | A Tropical Cyberpunk RPG
+block prepend title
+  - var page_title_string = "Cover";
 
-block append content
-  .row
-    .column
-      .ui.one.column.stackable.center.aligned.page.grid
-        .column.five.wide
-        .column.six.wide
-          a(href='/comics.html') Page Gallery
-        .column.five.wide
-          a(href='/comics/page_1.html') Next
-  .row
-    .column
-      .ui.one.column.stackable.center.aligned.page.grid
-        .column.sixteen.wide
-          a(href='/comics/page_1.html')
-            img.ui.image.fluid(src='../art/comics/HD/Kamigen_Cover.png')
-  .row
-    .column
-      .ui.one.column.stackable.center.aligned.page.grid
-        .column.five.wide
-        .column.six.wide
-          a(href='/comics.html') Page Gallery
-        .column.five.wide
-          a(href='/comics/page_1.html') Next
+block prepend content
+  - var image_url = '../art/comics/HD/Kamigen_Cover.png';
+  - var next_url = '/comics/page_1.html';
+  - var previous_url = '/comics.html';
