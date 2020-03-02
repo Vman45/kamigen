@@ -81,7 +81,7 @@ void main()
   // move the position along the normal
   vec3 newPosition = position + normal * bumpScale * vAmount;
 
-  worldPosition = modelMatrix * vec4( position, 1.0 );
+  worldPosition = modelMatrix * vec4( newPosition, 1.0 );
 
   // Normal position.
   vNormal = normalize( normalMatrix * normal );
@@ -244,7 +244,7 @@ void main()
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.js"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-126811218-1"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.4.0/Tween.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/108/three.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
     <script src="./vendor/ImprovedNoise.js"></script>
     <script src="./vendor/simplex.js"></script>
     <script src="./vendor/threex.keyboardstate.js"></script>

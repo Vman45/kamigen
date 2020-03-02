@@ -17,7 +17,7 @@ void main()
   // move the position along the normal
   vec3 newPosition = position + normal * bumpScale * vAmount;
 
-  worldPosition = modelMatrix * vec4( position, 1.0 );
+  worldPosition = modelMatrix * vec4( newPosition, 1.0 );
 
   // Normal position.
   vNormal = normalize( normalMatrix * normal );

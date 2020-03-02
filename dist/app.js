@@ -55,9 +55,9 @@ var app = (function () {
       var y = Math.floor(Math.random()*99) + 1; // this will get a number between 1 and 99;
       y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
       addCloud(new THREE.Vector3(
-        (parameters.oceanSide / 25) * x,
-        125000 + 125000 * Math.random(),
-        (parameters.oceanSide / 25) * y)
+        (parameters.oceanSide / 35) * x,
+        150000 + 25000 * Math.random(),
+        (parameters.oceanSide / 35) * y)
       );  
     } 
     
@@ -83,14 +83,26 @@ var app = (function () {
 
   }
 
+  var cloudId = 0;
+  var cloudTextures = ["./assets/cloud.png", "./assets/cloud2.png", "./assets/cloud3.png"];
   function addCloud(position) {
-    var spriteMap = new THREE.TextureLoader().load( "./assets/cloud.png" );
-    var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.1, map: spriteMap, color: 0xffffff } );
+    var spriteMap = new THREE.TextureLoader().load( cloudTextures[cloudId] );
+    var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.00125, map: spriteMap, color: 0xffffff } );
     var sprite = new THREE.Sprite( spriteMaterial );
     sprite.position.set(position.x, position.y, position.z);
     var randomer = Math.random();
-    sprite.scale.set(20000 * randomer,20000 * randomer,1);
+
+    var scaler = 1;
+    if (cloudId == 2) {
+      scaler = 3;
+    }
+    sprite.scale.set(scaler * 100000 * randomer, scaler * 75000 * randomer,1);
     scene.add( sprite );
+
+    cloudId++;
+    if (cloudId > 2) {
+      cloudId = 0;
+    }
   }
 
   function initLand() {

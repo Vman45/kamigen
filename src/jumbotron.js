@@ -45,9 +45,9 @@ function initSky() {
     var y = Math.floor(Math.random()*99) + 1; // this will get a number between 1 and 99;
     y *= Math.floor(Math.random()*2) == 1 ? 1 : -1; 
     addCloud(new THREE.Vector3(
-      (parameters.oceanSide / 25) * x,
-      125000 + 125000 * Math.random(),
-      (parameters.oceanSide / 25) * y)
+      (parameters.oceanSide / 35) * x,
+      150000 + 25000 * Math.random(),
+      (parameters.oceanSide / 35) * y)
     );  
   } 
   
@@ -59,28 +59,40 @@ function initSky() {
     mieCoefficient: 0.005,
     mieDirectionalG: 0.8,
     luminance: 1,
-    inclination: 0.4795, // elevation / inclination
-    azimuth: 0.465, // Facing front,
+    inclination: -1.1, // elevation / inclination
+    azimuth: -1.1, // Facing front,
     sun: ! true
   };
 
-  //  var sun_cycle = new TWEEN.Tween(effectController)
-  //   .to({azimuth: 1.1}, 600000)
-  //   .to({inclination: 1.1}, 600000)
-  //   .repeat(Infinity)
-  //   .yoyo(true)
-  //   .start();
+   var sun_cycle = new TWEEN.Tween(effectController)
+    .to({azimuth: 1.1}, 600000)
+    .to({inclination: 1.1}, 600000)
+    .repeat(Infinity)
+    .yoyo(true)
+    .start();
 
 }
 
+var cloudId = 0;
+var cloudTextures = ["./assets/cloud.png", "./assets/cloud2.png", "./assets/cloud3.png"];
 function addCloud(position) {
-  var spriteMap = new THREE.TextureLoader().load( "./assets/cloud.png" );
-  var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.1, map: spriteMap, color: 0xffffff } );
+  var spriteMap = new THREE.TextureLoader().load( cloudTextures[cloudId] );
+  var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.00125, map: spriteMap, color: 0xffffff } );
   var sprite = new THREE.Sprite( spriteMaterial );
   sprite.position.set(position.x, position.y, position.z);
   var randomer = Math.random();
-  sprite.scale.set(20000 * randomer,20000 * randomer,1);
+
+  var scaler = 1;
+  if (cloudId == 2) {
+    scaler = 3;
+  }
+  sprite.scale.set(scaler * 100000 * randomer, scaler * 75000 * randomer,1);
   scene.add( sprite );
+
+  cloudId++;
+  if (cloudId > 2) {
+    cloudId = 0;
+  }
 }
 
 function initLand() {
@@ -138,7 +150,7 @@ function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / 350, 100, parameters.oceanSide * 10000 );
   camera.position.x = -15000;
-  camera.position.y = 100;
+  camera.position.y = 150000;
   camera.position.z = 125000;
   camera.lookAt(0,0,0);
   
@@ -203,7 +215,7 @@ function animate() {
 }
 function render() {
   var delta = clock.getDelta(),
-    time = clock.getElapsedTime() * 10;
+    time = clock.getElapsedTime();
   
   water.material.uniforms.time.value += 1.0 / 60.0;
   land.material.uniforms.time.value += 1.0 / 60.0;
@@ -230,8 +242,11 @@ function render() {
   }
 
   //camera_controls.update( delta );
-  // camera.lookAt(ship.position);
-
+  camera.position.x = -150000 * Math.cos( time / 10 ) ;
+  camera.position.y = Math.max(1000, 140000 * Math.cos( time / 10 ));
+  camera.position.z = 120000 * Math.sin( time / 10 ) ;
+  camera.lookAt(0,3000,0);
+ 
   renderer.render( scene, camera );
 }
 
