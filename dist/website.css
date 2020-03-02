@@ -22,6 +22,9 @@ a:hover {
   text-decoration: none;
 }
 @media only screen and (max-width: 800px) {
+  .ui.page.grid {
+    padding: 0 !important;
+  }
   #jumbotron {
     padding: 0px !important;
   }
