@@ -164,8 +164,8 @@
       
     scene.add( camera );
 
-    initSky();
     initLand();
+    initSky();
 
     window.addEventListener( 'resize', onWindowResize, false );
   }

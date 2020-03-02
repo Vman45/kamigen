@@ -182,8 +182,8 @@ function init() {
   ship.add(camera);
   ship.rotateY(-Math.PI/2);
 
-  initSky();
   initLand();
+  initSky();
 
   drawTorus(-25000, 25000, 0);
   drawTorus(-45000, 35000, 0);
