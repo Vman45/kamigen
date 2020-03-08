@@ -85,6 +85,7 @@ var app = (function () {
 
   var cloudId = 0;
   var cloudTextures = ["./assets/cloud.png", "./assets/cloud2.png", "./assets/cloud3.png"];
+  var clouds = [];
   function addCloud(position) {
     var spriteMap = new THREE.TextureLoader().load( cloudTextures[cloudId] );
     var spriteMaterial = new THREE.SpriteMaterial( { alphaTest: 0.00125, map: spriteMap, color: 0xffffff } );
@@ -97,7 +98,9 @@ var app = (function () {
       scaler = 3;
     }
     sprite.scale.set(scaler * 100000 * randomer, scaler * 75000 * randomer,1);
-    scene.add( sprite );
+    clouds.push(sprite);
+    
+    scene.add( clouds[clouds.length - 1] );
 
     cloudId++;
     if (cloudId > 2) {
@@ -401,6 +404,10 @@ var app = (function () {
       sky.material.uniforms.sunPosition.value.copy( light.position.clone() );
       land.material.uniforms.sunPosition.value.copy( light.position.clone() );
     }
+
+    clouds.forEach(function (sprite) {
+      sprite.material.opacity = Math.min(1, Math.max(0.05,(sunSphere.position.y / parameters.oceanSide)));
+    });
 
     camera_controls.update( delta );
     camera.lookAt(ship.position);
