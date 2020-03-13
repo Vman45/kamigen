@@ -177,7 +177,7 @@ var game = (function () {
     
     setWater();
 
-    ship = drawShip();
+    drawShip();
       
     scene.add( ship );
     ship.add(camera);
@@ -204,9 +204,8 @@ var game = (function () {
     scene.add( torus );
   }
 
+  var lastBeta = 0, lastGamma = 0;
   function drawShip() {
-    var ship;
-
     var wingPort = getWing('port');
     var wingStarboard = getWing('starboard');
     var cockpit = getCockpit();
@@ -222,6 +221,32 @@ var game = (function () {
     $('.ui.button.accelerate').click(function () { return ship.velocity += 0.5; });
     $('.ui.button.decelerate').click(function () { return ship.velocity -= 0.5; });
     $('.ui.button.reset').click(function () { return camera_controls.reset(); });
+
+    if (window.DeviceOrientationEvent) {
+      
+      window.addEventListener("deviceorientation", function (event){
+        var betaDiff = lastBeta - event.beta;
+        var gammaDiff = lastGamma - event.gamma;
+
+        if (betaDiff > 5.5 || betaDiff < 5.5) {
+          ship.rotateX(betaDiff / 250);
+          if (betaDiff > 35 || betaDiff < 35) {
+            ship.rotateX(betaDiff / 50);
+          }
+        }
+        if (gammaDiff > 5.5 || gammaDiff < 5.5) {
+          ship.rotateY(gammaDiff / 250);
+          if (gammaDiff > 35 || gammaDiff < 35) {
+            ship.rotateY(gammaDiff / 50);
+          }
+        }
+        
+        lastBeta = event.beta;
+        lastGamma = event.gamma;
+      });
+    } else {
+      alert("Sorry, your browser doesn't support Device Orientation");
+    }
     
     return ship;
   }
@@ -379,7 +404,7 @@ var game = (function () {
     if (ship.velocity != 0) {
       initParticles();
       ship.velocity *= 0.9999;
-    } 
+    }
     requestAnimationFrame( animate );
     render();
   }
