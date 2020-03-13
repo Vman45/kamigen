@@ -222,9 +222,8 @@ var game = (function () {
     $('.ui.button.decelerate').click(function () { return ship.velocity -= 0.5; });
     $('.ui.button.reset').click(function () { return camera_controls.reset(); });
 
-    if (window.DeviceOrientationEvent) {
-      
-      window.addEventListener("deviceorientation", function (event){
+    
+      var eventHandler = function (event) {
         var betaDiff = lastBeta - event.beta;
         var gammaDiff = lastGamma - event.gamma;
 
@@ -243,11 +242,9 @@ var game = (function () {
         
         lastBeta = event.beta;
         lastGamma = event.gamma;
-      });
-    } else {
-      alert("Sorry, your browser doesn't support Device Orientation");
-    }
-    
+      };
+      window.addEventListener("deviceorientation", eventHandler, true );
+
     return ship;
   }
 

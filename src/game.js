@@ -229,9 +229,8 @@ function drawShip() {
   $('.ui.button.decelerate').click(() => ship.velocity -= 0.5);
   $('.ui.button.reset').click(() => camera_controls.reset());
 
-  if (window.DeviceOrientationEvent) {
-    
-    window.addEventListener("deviceorientation", (event)=> {
+  
+    var eventHandler = (event) => {
       var betaDiff = lastBeta - event.beta;
       var gammaDiff = lastGamma - event.gamma;
 
@@ -250,11 +249,9 @@ function drawShip() {
       
       lastBeta = event.beta;
       lastGamma = event.gamma;
-    });
-  } else {
-    alert("Sorry, your browser doesn't support Device Orientation");
-  }
-  
+    };
+    window.addEventListener("deviceorientation", eventHandler, true );
+
   return ship;
 }
 
