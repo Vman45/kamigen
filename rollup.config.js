@@ -1,7 +1,7 @@
 import buble from 'rollup-plugin-buble';
 import uglify from 'rollup-plugin-uglify';
 
-export default ['app', 'jumbotron'].map((name, index) => ({
+export default ['game', 'jumbotron'].map((name, index) => ({
   input: `src/${name}.js`,
   output: {
   	file: `dist/${name}.js`,

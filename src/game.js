@@ -176,6 +176,10 @@ function init() {
   scene.add( light );
   
   camera_controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+  if (window.innerWidth <= 800) {
+    
+  }
   
   setWater();
 
@@ -221,6 +225,10 @@ function drawShip() {
   ship.add(cockpit);
   ship.position.set(0, 25000, 0);
   ship.velocity = 15.0;
+
+  $('.ui.button.accelerate').click(() => ship.velocity += 0.5);
+  $('.ui.button.decelerate').click(() => ship.velocity -= 0.5);
+  $('.ui.button.reset').click(() => camera_controls.reset());
   
   return ship;
 }
