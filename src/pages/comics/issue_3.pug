@@ -1,0 +1,26 @@
+extends /src/templates/website.pug
+
+block append title
+  | Issue 03 | Comics | Kamigen | A Tropical Cyberpunk RPG
+
+block append content
+  .row#comics
+    .column
+      .ui.one.column.stackable.center.aligned.page.grid
+        .column.four.wide
+          a(href='/comics/issue_3_cover.html')
+            img.ui.image.fluid(src='./art/comics/SD/Kamigen Issue 03 Cover-01.png')
+            h3 Cover
+        .column.four.wide
+          a(href='/comics/page_61.html')
+            img.ui.image.fluid(src='./art/comics/SD/Kamigen%20Page%2061-01.png')
+            h3 Page 61
+        .column.four.wide
+          a(href='/comics/page_62.html')
+            img.ui.image.fluid(src='./art/comics/SD/Kamigen%20Page%2062-01.png')
+            h3 Page 62
+        .column.four.wide
+          a(href='/comics/page_63.html')
+            img.ui.image.fluid(src='./art/comics/SD/Kamigen%20Page%2063-01.png')
+            h3 Page 63
+        
